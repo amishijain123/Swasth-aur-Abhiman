@@ -1,0 +1,55 @@
+version: '3.8'
+
+services:
+  postgres:
+    image: postgres:15-alpine
+    container_name: swastha_postgres
+    restart: always
+    ports:
+      - "5432:5432"
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgres
+      POSTGRES_DB: swastha_aur_abhiman
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    networks:
+      - swastha_network
+
+  # MinIO for local S3-compatible storage (alternative to AWS S3)
+  minio:
+    image: minio/minio:latest
+    container_name: swastha_minio
+    restart: always
+    ports:
+      - "9000:9000"
+      - "9001:9001"
+    environment:
+      MINIO_ROOT_USER: minioadmin
+      MINIO_ROOT_PASSWORD: minioadmin
+    volumes:
+      - minio_data:/data
+    command: server /data --console-address ":9001"
+    networks:
+      - swastha_network
+
+  # Redis for caching and session management
+  redis:
+    image: redis:7-alpine
+    container_name: swastha_redis
+    restart: always
+    ports:
+      - "6379:6379"
+    volumes:
+      - redis_data:/data
+    networks:
+      - swastha_network
+
+volumes:
+  postgres_data:
+  minio_data:
+  redis_data:
+
+networks:
+  swastha_network:
+    driver: bridge
