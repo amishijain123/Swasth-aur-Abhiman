@@ -57,9 +57,11 @@ class _RegisterScreenState extends ConsumerState<RegisterScreen> {
 
     final success = await ref.read(authProvider.notifier).register(request);
 
-    if (success && mounted) {
-      context.go('/home');
-    } else if (mounted) {
+    if (!mounted) return;
+
+    if (success) {
+      // Don't navigate - let the router redirect automatically
+    } else {
       final error = ref.read(authProvider).error;
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(content: Text(error ?? 'Registration failed')),

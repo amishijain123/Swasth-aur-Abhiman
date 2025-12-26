@@ -34,9 +34,11 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
           _selectedRole.name.toUpperCase(),
         );
 
-    if (success && mounted) {
-      context.go('/home');
-    } else if (mounted) {
+    if (!mounted) return;
+
+    if (success) {
+      // Don't navigate - let the router redirect automatically
+    } else {
       final error = ref.read(authProvider).error;
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(content: Text(error ?? 'Login failed')),
