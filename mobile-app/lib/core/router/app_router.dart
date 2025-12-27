@@ -12,6 +12,9 @@ import '../../features/nutrition/presentation/screens/nutrition_screen.dart';
 import '../../features/events/presentation/screens/events_screen.dart';
 import '../../features/chat/presentation/screens/chat_list_screen.dart';
 import '../../features/admin/presentation/screens/admin_dashboard_screen.dart';
+import '../../features/doctor/presentation/screens/doctor_dashboard_screen.dart';
+import '../../features/teacher/presentation/screens/teacher_dashboard_screen.dart';
+import '../../features/trainer/presentation/screens/trainer_dashboard_screen.dart';
 
 final appRouterProvider = Provider<GoRouter>((ref) {
   final authState = ref.watch(authProvider);
@@ -75,6 +78,18 @@ final appRouterProvider = Provider<GoRouter>((ref) {
       GoRoute(
         path: '/admin',
         builder: (context, state) => const AdminDashboardScreen(),
+      ),
+      GoRoute(
+        path: '/doctor',
+        builder: (context, state) => const DoctorDashboardScreen(),
+      ),
+      GoRoute(
+        path: '/teacher',
+        builder: (context, state) => const TeacherDashboardScreen(),
+      ),
+      GoRoute(
+        path: '/trainer',
+        builder: (context, state) => const TrainerDashboardScreen(),
       ),
     ],
   );

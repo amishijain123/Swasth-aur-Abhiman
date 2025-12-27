@@ -68,6 +68,36 @@ class HomeScreen extends ConsumerWidget {
                 },
               ),
             ],
+            if (user?.role.toUpperCase() == 'DOCTOR') ...[
+              ListTile(
+                leading: const Icon(Icons.medical_services),
+                title: const Text('Doctor Dashboard'),
+                onTap: () {
+                  Navigator.pop(context);
+                  context.push('/doctor');
+                },
+              ),
+            ],
+            if (user?.role.toUpperCase() == 'TEACHER') ...[
+              ListTile(
+                leading: const Icon(Icons.school),
+                title: const Text('Teacher Dashboard'),
+                onTap: () {
+                  Navigator.pop(context);
+                  context.push('/teacher');
+                },
+              ),
+            ],
+            if (user?.role.toUpperCase() == 'TRAINER') ...[
+              ListTile(
+                leading: const Icon(Icons.handyman),
+                title: const Text('Trainer Dashboard'),
+                onTap: () {
+                  Navigator.pop(context);
+                  context.push('/trainer');
+                },
+              ),
+            ],
             ListTile(
               leading: const Icon(Icons.medical_services),
               title: const Text('Medical'),
