@@ -29,7 +29,7 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
     if (!_formKey.currentState!.validate()) return;
 
     final success = await ref.read(authProvider.notifier).login(
-          _emailController.text,
+          _emailController.text.trim(),
           _passwordController.text,
           _selectedRole.name.toUpperCase(),
         );
@@ -37,11 +37,15 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
     if (!mounted) return;
 
     if (success) {
-      // Don't navigate - let the router redirect automatically
+      // Navigate to home after successful login
+      context.go('/home');
     } else {
       final error = ref.read(authProvider).error;
       ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text(error ?? 'Login failed')),
+        SnackBar(
+          content: Text(error ?? 'Login failed'),
+          backgroundColor: Colors.red,
+        ),
       );
     }
   }
