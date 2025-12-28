@@ -16,12 +16,29 @@ import '../../features/doctor/presentation/screens/doctor_dashboard_screen.dart'
 import '../../features/teacher/presentation/screens/teacher_dashboard_screen.dart';
 import '../../features/trainer/presentation/screens/trainer_dashboard_screen.dart';
 
+// Listenable for router refresh
+class AuthNotifierListenable extends ChangeNotifier {
+  AuthNotifierListenable(this._ref) {
+    _ref.listen(authProvider, (_, __) {
+      notifyListeners();
+    });
+  }
+
+  final Ref _ref;
+}
+
+final _routerRefreshListenableProvider = Provider<AuthNotifierListenable>((ref) {
+  return AuthNotifierListenable(ref);
+});
+
 final appRouterProvider = Provider<GoRouter>((ref) {
-  final authState = ref.watch(authProvider);
+  final refreshListenable = ref.watch(_routerRefreshListenableProvider);
   
   return GoRouter(
     initialLocation: '/login',
+    refreshListenable: refreshListenable,
     redirect: (context, state) {
+      final authState = ref.read(authProvider);
       final isLoggedIn = authState.user != null;
       final isLoggingIn = state.matchedLocation == '/login' || 
                           state.matchedLocation == '/register';
