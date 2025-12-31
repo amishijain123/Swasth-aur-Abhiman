@@ -67,7 +67,7 @@ export class ChatService {
   }
 
   async sendMessage(sendMessageDto: SendMessageDto, sender: User) {
-    const { roomId, content, type } = sendMessageDto;
+    const { roomId, content, type, mediaUrl, audioDuration } = sendMessageDto;
 
     const room = await this.chatRoomRepository.findOne({
       where: { id: roomId },
@@ -89,6 +89,8 @@ export class ChatService {
       sender,
       content,
       type: type || 'TEXT',
+      mediaUrl,
+      audioDuration,
     });
 
     const savedMessage = await this.messageRepository.save(message);
@@ -97,7 +99,19 @@ export class ChatService {
     room.lastMessageAt = new Date();
     await this.chatRoomRepository.save(room);
 
-    return savedMessage;
+    // Return message with additional fields for the client
+    return {
+      id: savedMessage.id,
+      roomId: room.id,
+      senderId: sender.id,
+      senderName: sender.fullName,
+      content: savedMessage.content,
+      type: savedMessage.type,
+      mediaUrl: savedMessage.mediaUrl,
+      audioDuration: savedMessage.audioDuration,
+      isRead: savedMessage.isRead,
+      createdAt: savedMessage.createdAt,
+    };
   }
 
   async getRoomMessages(roomId: string, userId: string) {
