@@ -52,7 +52,7 @@ class _MessageInputState extends State<MessageInput> {
           ],
         ),
         child: SafeArea(
-          child: AudioRecorder(
+          child: VoiceRecorder(
             onRecordingComplete: (path, duration) {
               setState(() => _isRecording = false);
               widget.onSendAudio?.call(path, duration);

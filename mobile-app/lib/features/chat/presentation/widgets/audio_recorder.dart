@@ -68,8 +68,8 @@ class _VoiceRecorderState extends State<VoiceRecorder>
         _recordingPath = '${directory.path}/voice_$timestamp.m4a';
 
         await _recorder.start(
-          const RecordConfig(
-            encoder: AudioEncoder.aacLc,
+          const record_pkg.RecordConfig(
+            encoder: record_pkg.AudioEncoder.aacLc,
             bitRate: 128000,
             sampleRate: 44100,
           ),
