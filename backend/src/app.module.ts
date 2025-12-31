@@ -7,6 +7,8 @@ import { MediaModule } from './media/media.module';
 import { EventsModule } from './events/events.module';
 import { PrescriptionsModule } from './prescriptions/prescriptions.module';
 import { ChatModule } from './chat/chat.module';
+import { YoutubeModule } from './youtube/youtube.module';
+import { AnalyticsModule } from './analytics/analytics.module';
 
 @Module({
   imports: [
@@ -40,6 +42,8 @@ import { ChatModule } from './chat/chat.module';
     EventsModule,
     PrescriptionsModule,
     ChatModule,
+    YoutubeModule,
+    AnalyticsModule,
   ],
 })
 export class AppModule {}
