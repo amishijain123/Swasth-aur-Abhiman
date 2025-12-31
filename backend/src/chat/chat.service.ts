@@ -1,10 +1,11 @@
 import { Injectable, NotFoundException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { Repository, In } from 'typeorm';
+import { Repository, In, Not } from 'typeorm';
 import { ChatRoom } from './entities/chat-room.entity';
 import { Message } from './entities/message.entity';
 import { User } from '../users/entities/user.entity';
 import { CreateChatRoomDto, SendMessageDto } from './dto/chat.dto';
+import { UserRole } from '../common/enums/user.enum';
 
 @Injectable()
 export class ChatService {
@@ -131,5 +132,36 @@ export class ChatService {
       .andWhere('senderId != :userId', { userId })
       .andWhere('isRead = :isRead', { isRead: false })
       .execute();
+  }
+
+  async getAvailableContacts(currentUserId: string, role?: string) {
+    const whereConditions: any = {
+      id: Not(currentUserId),
+      isActive: true,
+    };
+
+    if (role && Object.values(UserRole).includes(role as UserRole)) {
+      whereConditions.role = role as UserRole;
+    }
+
+    const users = await this.userRepository.find({
+      where: whereConditions,
+      relations: ['userProfile', 'doctorProfile'],
+      order: { fullName: 'ASC' },
+    });
+
+    return users.map(user => ({
+      id: user.id,
+      name: user.fullName,
+      role: user.role,
+      email: user.email,
+      avatarUrl: user.userProfile?.avatarUrl || null,
+      block: user.userProfile?.block || null,
+      isOnline: false, // Can be tracked via websocket connections
+    }));
+  }
+
+  async sendMessageToRoom(sendMessageDto: SendMessageDto, sender: User) {
+    return this.sendMessage(sendMessageDto, sender);
   }
 }
