@@ -5,6 +5,7 @@ import '../../providers/chat_provider.dart';
 import '../../../auth/providers/auth_provider.dart';
 import '../widgets/message_bubble.dart';
 import '../widgets/message_input.dart';
+import '../widgets/media_preview_dialog.dart';
 
 class ChatRoomScreen extends ConsumerStatefulWidget {
   final ChatRoom room;
@@ -90,6 +91,7 @@ class _ChatRoomScreenState extends ConsumerState<ChatRoomScreen> {
             isSending: chatState.isSending,
             onSend: (message) => _sendMessage(message),
             onSendAudio: (path, duration) => _sendAudioMessage(path, duration),
+            onSendMedia: (filePath, mediaType) => _sendMediaMessage(filePath, mediaType),
           ),
         ],
       ),
@@ -210,6 +212,71 @@ class _ChatRoomScreenState extends ConsumerState<ChatRoomScreen> {
         curve: Curves.easeOut,
       );
     }
+  }
+
+  Future<void> _sendMediaMessage(String filePath, String mediaType) async {
+    // Show preview dialog
+    await showDialog(
+      context: context,
+      barrierDismissible: false,
+      builder: (context) => MediaPreviewDialog(
+        filePath: filePath,
+        fileName: filePath.split('/').last,
+        mediaType: mediaType,
+        onSend: (caption) async {
+          Navigator.pop(context);
+          
+          // Show uploading indicator
+          ScaffoldMessenger.of(context).showSnackBar(
+            const SnackBar(
+              content: Text('Uploading...'),
+              duration: Duration(seconds: 30),
+              behavior: SnackBarBehavior.floating,
+            ),
+          );
+
+          final success = await ref.read(chatProvider.notifier).sendMediaMessage(
+            widget.room.id,
+            filePath,
+            mediaType,
+            caption: caption,
+          );
+          
+          if (mounted) {
+            ScaffoldMessenger.of(context).clearSnackBars();
+            
+            if (success) {
+              ScaffoldMessenger.of(context).showSnackBar(
+                const SnackBar(
+                  content: Text('Message sent!'),
+                  duration: Duration(seconds: 2),
+                  behavior: SnackBarBehavior.floating,
+                ),
+              );
+              
+              // Scroll to bottom after sending
+              if (_scrollController.hasClients) {
+                _scrollController.animateTo(
+                  0,
+                  duration: const Duration(milliseconds: 300),
+                  curve: Curves.easeOut,
+                );
+              }
+            } else {
+              final error = ref.read(chatProvider).error;
+              ScaffoldMessenger.of(context).showSnackBar(
+                SnackBar(
+                  content: Text(error ?? 'Failed to send message'),
+                  duration: const Duration(seconds: 4),
+                  behavior: SnackBarBehavior.floating,
+                  backgroundColor: Colors.red,
+                ),
+              );
+            }
+          }
+        },
+      ),
+    );
   }
 
   void _showRoomInfo(BuildContext context) {

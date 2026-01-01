@@ -7,6 +7,11 @@ export class CreateChatRoomDto {
   @IsString()
   @IsOptional()
   name?: string;
+
+  // Optional type to allow DIRECT/GROUP without failing the whitelist validation
+  @IsString()
+  @IsOptional()
+  type?: string;
 }
 
 export class SendMessageDto {

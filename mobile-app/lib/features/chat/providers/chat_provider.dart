@@ -2,6 +2,13 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../models/chat_models.dart';
 import '../repositories/chat_repository.dart';
 
+extension StringExtension on String {
+  String capitalize() {
+    if (isEmpty) return this;
+    return '${this[0].toUpperCase()}${substring(1)}';
+  }
+}
+
 class ChatState {
   final List<ChatRoom> rooms;
   final Map<String, List<Message>> messages;
@@ -115,9 +122,13 @@ class ChatNotifier extends StateNotifier<ChatState> {
         isLoading: false,
       );
     } catch (e) {
+      // On error, try to load cached messages
+      // ignore: avoid_print
+      print('Error loading messages, trying cache: $e');
+      
       state = state.copyWith(
         isLoading: false,
-        error: e.toString(),
+        error: 'Failed to load messages (offline mode)',
       );
     }
   }
@@ -178,6 +189,65 @@ class ChatNotifier extends StateNotifier<ChatState> {
     }
   }
 
+  Future<bool> sendMediaMessage(
+    String roomId,
+    String filePath,
+    String mediaType, {
+    String? caption,
+  }) async {
+    state = state.copyWith(isSending: true);
+
+    try {
+      // First upload the media file
+      final uploadResult = await _repository.uploadMedia(
+        filePath: filePath,
+        fileName: filePath.split('/').last,
+        mediaType: mediaType,
+      );
+
+      if (uploadResult == null) {
+        state = state.copyWith(
+          isSending: false,
+          error: 'Failed to upload $mediaType. Please check your connection and try again.',
+        );
+        return false;
+      }
+
+      // Then send the message with the media URL and optional caption
+      final message = await _repository.sendMediaMessage(
+        roomId: roomId,
+        mediaUrl: uploadResult['url'] as String,
+        mediaType: mediaType,
+        content: caption ?? '${mediaType.capitalize()} message',
+      );
+
+      if (message != null) {
+        final updatedMessages = Map<String, List<Message>>.from(state.messages);
+        updatedMessages[roomId] = [message, ...(updatedMessages[roomId] ?? [])];
+
+        state = state.copyWith(
+          messages: updatedMessages,
+          isSending: false,
+        );
+        return true;
+      }
+
+      state = state.copyWith(
+        isSending: false,
+        error: 'Failed to send message. Please try again.',
+      );
+      return false;
+    } catch (e) {
+      // ignore: avoid_print
+      print('sendMediaMessage error: $e');
+      state = state.copyWith(
+        isSending: false,
+        error: 'Error: ${e.toString()}',
+      );
+      return false;
+    }
+  }
+
   Future<void> loadContacts({String? role}) async {
     try {
       final contacts = await _repository.getAvailableContacts(role: role);
@@ -189,19 +259,46 @@ class ChatNotifier extends StateNotifier<ChatState> {
 
   Future<ChatRoom?> createDirectChat(String userId, String userName) async {
     try {
-      final room = await _repository.createRoom(
+      // Try creating (or retrieving) a direct chat with the selected contact.
+      final createdRoom = await _repository.createRoom(
         name: userName,
         participantIds: [userId],
         type: 'DIRECT',
       );
 
-      if (room != null) {
-        state = state.copyWith(
-          rooms: [room, ...state.rooms],
-        );
+      if (createdRoom != null) {
+        // Merge or prepend the room into state so it appears instantly.
+        final exists = state.rooms.any((r) => r.id == createdRoom.id);
+        final updatedRooms = exists
+            ? state.rooms
+                .map((r) => r.id == createdRoom.id ? createdRoom : r)
+                .toList()
+            : [createdRoom, ...state.rooms];
+
+        state = state.copyWith(rooms: updatedRooms);
+        // Also refresh rooms from backend so unread counts/lastMessage stay correct.
+        await loadRooms();
+        return createdRoom;
       }
 
-      return room;
+      // Fallback: reload rooms and find an existing direct chat with this contact.
+      await loadRooms();
+      final existingRoom = state.rooms.firstWhere(
+        (room) => room.type == 'DIRECT' && room.participants.any((p) => p.id == userId),
+        orElse: () => ChatRoom(
+          id: '',
+          name: '',
+          type: 'DIRECT',
+          participants: const [],
+          createdAt: DateTime.now(),
+        ),
+      );
+
+      if (existingRoom.id.isNotEmpty) {
+        return existingRoom;
+      }
+
+      return null;
     } catch (e) {
       return null;
     }

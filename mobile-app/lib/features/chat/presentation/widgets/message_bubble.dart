@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import '../../models/chat_models.dart';
 import 'package:intl/intl.dart';
+import 'package:url_launcher/url_launcher.dart';
 import 'audio_recorder.dart';
 
 class MessageBubble extends StatelessWidget {
@@ -14,6 +15,23 @@ class MessageBubble extends StatelessWidget {
     required this.isMe,
     this.showAvatar = true,
   });
+
+  // Helper method to get full URL for media
+  String _getFullMediaUrl(String? mediaUrl) {
+    if (mediaUrl == null) return '';
+    // If already has http, return as is
+    if (mediaUrl.startsWith('http')) return mediaUrl;
+    // If relative path, prepend backend URL
+    return 'http://localhost:3000$mediaUrl';
+  }
+
+  // Helper to launch URL (for downloads)
+  Future<void> _launchUrl(String url) async {
+    final Uri uri = Uri.parse(url);
+    if (await canLaunchUrl(uri)) {
+      await launchUrl(uri, mode: LaunchMode.externalApplication);
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -100,11 +118,34 @@ class MessageBubble extends StatelessWidget {
                           borderRadius: BorderRadius.circular(8),
                           child: message.mediaUrl != null
                               ? Image.network(
-                                  message.mediaUrl!,
+                                  _getFullMediaUrl(message.mediaUrl),
                                   width: 200,
                                   fit: BoxFit.cover,
-                                  errorBuilder: (_, __, ___) =>
-                                      const Icon(Icons.broken_image),
+                                  errorBuilder: (context, error, stackTrace) {
+                                    print('Image load error: $error');
+                                    print('Image URL: ${_getFullMediaUrl(message.mediaUrl)}');
+                                    return Container(
+                                      width: 200,
+                                      height: 200,
+                                      color: Colors.grey[300],
+                                      child: Column(
+                                        mainAxisAlignment:
+                                            MainAxisAlignment.center,
+                                        children: [
+                                          Icon(Icons.broken_image,
+                                              color: Colors.grey[600]),
+                                          const SizedBox(height: 8),
+                                          Text(
+                                            'Cannot load image',
+                                            style: TextStyle(
+                                              fontSize: 12,
+                                              color: Colors.grey[600],
+                                            ),
+                                          ),
+                                        ],
+                                      ),
+                                    );
+                                  },
                                 )
                               : const Icon(Icons.image),
                         ),
@@ -119,6 +160,45 @@ class MessageBubble extends StatelessWidget {
                             ),
                           ),
                       ],
+                    )
+                  else if (message.type == 'DOCUMENT')
+                    GestureDetector(
+                      onTap: message.mediaUrl != null
+                          ? () => _launchUrl(_getFullMediaUrl(message.mediaUrl))
+                          : null,
+                      child: Row(
+                        children: [
+                          Icon(
+                            Icons.insert_drive_file,
+                            color: isMe ? Colors.white : Colors.blue,
+                          ),
+                          const SizedBox(width: 8),
+                          Expanded(
+                            child: Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                Text(
+                                  message.content,
+                                  style: TextStyle(
+                                    color: isMe ? Colors.white : Colors.black87,
+                                    fontWeight: FontWeight.w500,
+                                  ),
+                                ),
+                                const SizedBox(height: 4),
+                                Text(
+                                  'Tap to download',
+                                  style: TextStyle(
+                                    fontSize: 10,
+                                    color: isMe
+                                        ? Colors.white.withOpacity(0.7)
+                                        : Colors.blue,
+                                  ),
+                                ),
+                              ],
+                            ),
+                          ),
+                        ],
+                      ),
                     ),
 
                   // Timestamp

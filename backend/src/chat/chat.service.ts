@@ -47,7 +47,11 @@ export class ChatService {
     }
 
     const chatRoom = this.chatRoomRepository.create({
-      name,
+      // For direct chats, default the room name to the other participant's full name when not provided.
+      name:
+        participantIds.length === 1 && (!name || name.trim() === '')
+          ? participants.find(p => p.id !== currentUser.id)?.fullName || 'Chat'
+          : name,
       type: participantIds.length === 1 ? 'DIRECT' : 'GROUP',
       participants,
     });

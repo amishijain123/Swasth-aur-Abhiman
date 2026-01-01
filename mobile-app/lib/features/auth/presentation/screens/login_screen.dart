@@ -131,20 +131,11 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
                       borderRadius: BorderRadius.circular(16),
                       border: Border.all(color: Colors.grey[300]!),
                     ),
-                    child: ClipRRect(
-                      borderRadius: BorderRadius.circular(16),
-                      child: Image.asset(
-                        'assets/images/main_app_logo.png',
-                        fit: BoxFit.contain,
-                        errorBuilder: (context, error, stackTrace) {
-                          return Center(
-                            child: Icon(
-                              Icons.health_and_safety,
-                              size: 80,
-                              color: Colors.green[700],
-                            ),
-                          );
-                        },
+                    child: Center(
+                      child: Icon(
+                        Icons.health_and_safety,
+                        size: 80,
+                        color: Colors.green[700],
                       ),
                     ),
                   ),
@@ -338,30 +329,23 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
     required double width,
     required double height,
   }) {
-    return SizedBox(
+    // Assets are missing in the repo; render a clean placeholder to avoid 404 spam on web.
+    return Container(
       width: width,
       height: height,
-      child: Image.asset(
-        assetName,
-        fit: BoxFit.contain,
-        errorBuilder: (context, error, stackTrace) {
-          return Container(
-            decoration: BoxDecoration(
-              color: Colors.grey[200],
-              borderRadius: BorderRadius.circular(8),
-            ),
-            child: Center(
-              child: Text(
-                fallbackText,
-                style: TextStyle(
-                  fontSize: 12,
-                  fontWeight: FontWeight.w600,
-                  color: Colors.grey[600],
-                ),
-              ),
-            ),
-          );
-        },
+      decoration: BoxDecoration(
+        color: Colors.grey[200],
+        borderRadius: BorderRadius.circular(8),
+      ),
+      child: Center(
+        child: Text(
+          fallbackText,
+          style: TextStyle(
+            fontSize: 12,
+            fontWeight: FontWeight.w600,
+            color: Colors.grey[600],
+          ),
+        ),
       ),
     );
   }

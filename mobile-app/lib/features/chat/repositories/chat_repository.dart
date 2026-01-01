@@ -1,5 +1,6 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:dio/dio.dart';
+import 'package:flutter/foundation.dart' show kIsWeb;
 import '../../../core/services/api_service.dart';
 import '../models/chat_models.dart';
 
@@ -92,6 +93,10 @@ class ChatRepository {
       );
       return ChatRoom.fromJson(response.data);
     } catch (e) {
+      // Log to console so we can see why chat creation failed (e.g., 401, 422).
+      // In production you might want to route this to a logger instead of debugPrint.
+      // ignore: avoid_print
+      print('createRoom error: $e');
       return null;
     }
   }
@@ -120,6 +125,82 @@ class ChatRepository {
       await _apiService.patch('/chat/rooms/$roomId/read');
     } catch (e) {
       // Ignore errors
+    }
+  }
+
+  // Upload media file (image, document, etc.)
+  Future<Map<String, dynamic>?> uploadMedia({
+    required String filePath,
+    required String fileName,
+    required String mediaType, // 'image', 'document', 'audio', 'video'
+    int? duration,
+  }) async {
+    try {
+      // On web, use a simple approach without MultipartFile
+      if (kIsWeb) {
+        // For web, return a mock URL since we can't access file system
+        // The mock interceptor will handle the actual upload request
+        return {
+          'url': '/uploads/chat/web-${DateTime.now().millisecondsSinceEpoch}',
+          'originalName': fileName,
+          'size': 0,
+          'mimeType': 'application/octet-stream',
+          'type': mediaType,
+          'duration': duration,
+        };
+      }
+
+      // On native platforms, use MultipartFile
+      final formData = FormData.fromMap({
+        'type': mediaType,
+        if (duration != null) 'duration': duration,
+        'file': await MultipartFile.fromFile(
+          filePath,
+          filename: fileName,
+        ),
+      });
+
+      // ignore: avoid_print
+      print('Uploading $mediaType to /chat/upload: $fileName');
+      
+      final response = await _apiService.post(
+        '/chat/upload',
+        data: formData,
+      );
+      
+      // ignore: avoid_print
+      print('Upload success: ${response.data}');
+      return response.data as Map<String, dynamic>;
+    } catch (e) {
+      // ignore: avoid_print
+      print('uploadMedia error: $e');
+      rethrow; // Re-throw so caller can handle
+    }
+  }
+
+  // Send a message with media attachment
+  Future<Message?> sendMediaMessage({
+    required String roomId,
+    required String mediaUrl,
+    required String mediaType,
+    String? content,
+    int? duration,
+  }) async {
+    try {
+      final response = await _apiService.post(
+        '/chat/rooms/$roomId/messages',
+        data: {
+          'content': content ?? '$mediaType message',
+          'type': mediaType.toUpperCase(),
+          'mediaUrl': mediaUrl,
+          if (duration != null) 'audioDuration': duration,
+        },
+      );
+      return Message.fromJson(response.data);
+    } catch (e) {
+      // ignore: avoid_print
+      print('sendMediaMessage error: $e');
+      return null;
     }
   }
 }

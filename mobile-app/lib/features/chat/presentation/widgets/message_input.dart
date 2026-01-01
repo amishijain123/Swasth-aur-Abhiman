@@ -1,16 +1,21 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/foundation.dart';
+import 'package:image_picker/image_picker.dart';
+import 'package:file_picker/file_picker.dart';
 import 'audio_recorder.dart';
 
 class MessageInput extends StatefulWidget {
   final bool isSending;
   final Function(String) onSend;
   final Function(String, int)? onSendAudio;
+  final Function(String, String)? onSendMedia; // (filePath, mediaType)
 
   const MessageInput({
     super.key,
     required this.isSending,
     required this.onSend,
     this.onSendAudio,
+    this.onSendMedia,
   });
 
   @override
@@ -139,7 +144,18 @@ class _MessageInputState extends State<MessageInput> {
                             color: Theme.of(context).primaryColor,
                           ),
                           onPressed: widget.onSendAudio != null
-                              ? () => setState(() => _isRecording = true)
+                              ? () {
+                                  if (kIsWeb) {
+                                    ScaffoldMessenger.of(context).showSnackBar(
+                                      const SnackBar(
+                                        content: Text('Voice messages are not supported on web. Please use the mobile app.'),
+                                        behavior: SnackBarBehavior.floating,
+                                      ),
+                                    );
+                                    return;
+                                  }
+                                  setState(() => _isRecording = true);
+                                }
                               : null,
                           tooltip: 'Send voice message',
                         ),
@@ -155,6 +171,53 @@ class _MessageInputState extends State<MessageInput> {
     if (text.isNotEmpty) {
       widget.onSend(text);
       _controller.clear();
+    }
+  }
+
+  Future<void> _pickImage(ImageSource source) async {
+    try {
+      final ImagePicker picker = ImagePicker();
+      final XFile? image = await picker.pickImage(source: source);
+      
+      if (image != null && mounted && widget.onSendMedia != null) {
+        // Pass the image info to parent for preview
+        widget.onSendMedia!(image.path, 'image');
+      }
+    } catch (e) {
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text('Failed to pick image: $e'),
+            behavior: SnackBarBehavior.floating,
+          ),
+        );
+      }
+    }
+  }
+
+  Future<void> _pickDocument() async {
+    try {
+      FilePickerResult? result = await FilePicker.platform.pickFiles(
+        type: FileType.custom,
+        allowedExtensions: ['pdf', 'doc', 'docx', 'txt'],
+      );
+
+      if (result != null && mounted) {
+        final file = result.files.first;
+        if (file.path != null && widget.onSendMedia != null) {
+          // Pass the document info to parent for preview
+          widget.onSendMedia!(file.path!, 'document');
+        }
+      }
+    } catch (e) {
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text('Failed to pick document: $e'),
+            behavior: SnackBarBehavior.floating,
+          ),
+        );
+      }
     }
   }
 
@@ -183,7 +246,7 @@ class _MessageInputState extends State<MessageInput> {
                   color: Colors.purple,
                   onTap: () {
                     Navigator.pop(context);
-                    // TODO: Implement photo picker
+                    _pickImage(ImageSource.gallery);
                   },
                 ),
                 _AttachmentOption(
@@ -192,7 +255,7 @@ class _MessageInputState extends State<MessageInput> {
                   color: Colors.red,
                   onTap: () {
                     Navigator.pop(context);
-                    // TODO: Implement camera
+                    _pickImage(ImageSource.camera);
                   },
                 ),
                 _AttachmentOption(
@@ -201,6 +264,15 @@ class _MessageInputState extends State<MessageInput> {
                   color: Colors.orange,
                   onTap: () {
                     Navigator.pop(context);
+                    if (kIsWeb) {
+                      ScaffoldMessenger.of(context).showSnackBar(
+                        const SnackBar(
+                          content: Text('Voice messages are not supported on web.'),
+                          behavior: SnackBarBehavior.floating,
+                        ),
+                      );
+                      return;
+                    }
                     if (widget.onSendAudio != null) {
                       setState(() => _isRecording = true);
                     }
@@ -212,7 +284,7 @@ class _MessageInputState extends State<MessageInput> {
                   color: Colors.blue,
                   onTap: () {
                     Navigator.pop(context);
-                    // TODO: Implement file picker
+                    _pickDocument();
                   },
                 ),
               ],

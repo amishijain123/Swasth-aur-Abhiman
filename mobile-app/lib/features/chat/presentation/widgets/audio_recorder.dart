@@ -1,5 +1,6 @@
 import 'dart:async';
 import 'package:flutter/material.dart';
+import 'package:flutter/foundation.dart';
 import 'package:record/record.dart' as record_pkg;
 import 'package:path_provider/path_provider.dart';
 import 'package:permission_handler/permission_handler.dart';
@@ -46,6 +47,19 @@ class _VoiceRecorderState extends State<VoiceRecorder>
   }
 
   Future<void> _startRecording() async {
+    // Web: the record plugin + getTemporaryDirectory are not available. Gracefully bail out.
+    if (kIsWeb) {
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(
+            content: Text('Voice messages are not supported on web yet.'),
+          ),
+        );
+      }
+      widget.onCancel();
+      return;
+    }
+
     // Request microphone permission
     final status = await Permission.microphone.request();
     if (status != PermissionStatus.granted) {

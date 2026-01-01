@@ -18,21 +18,27 @@ import { AnalyticsModule } from './analytics/analytics.module';
       envFilePath: '.env',
     }),
 
-    // Database Module
+    // Database Module - with error handling for connection failures
     TypeOrmModule.forRootAsync({
       imports: [ConfigModule],
       inject: [ConfigService],
-      useFactory: (configService: ConfigService) => ({
-        type: 'postgres',
-        host: configService.get('DB_HOST'),
-        port: configService.get<number>('DB_PORT'),
-        username: configService.get('DB_USERNAME'),
-        password: configService.get('DB_PASSWORD'),
-        database: configService.get('DB_DATABASE'),
-        entities: [__dirname + '/**/*.entity{.ts,.js}'],
-        synchronize: configService.get('NODE_ENV') === 'development', // Set to false in production
-        logging: configService.get('NODE_ENV') === 'development',
-      }),
+      useFactory: (configService: ConfigService) => {
+        const dbConfig = {
+          type: 'postgres' as const,
+          host: configService.get('DB_HOST'),
+          port: configService.get<number>('DB_PORT'),
+          username: configService.get('DB_USERNAME'),
+          password: configService.get('DB_PASSWORD'),
+          database: configService.get('DB_DATABASE'),
+          entities: [__dirname + '/**/*.entity{.ts,.js}'],
+          synchronize: configService.get('NODE_ENV') === 'development',
+          logging: configService.get('NODE_ENV') === 'development',
+          // Retry connection on failure
+          retryAttempts: 3,
+          retryDelay: 3000,
+        };
+        return dbConfig;
+      },
     }),
 
     // Feature Modules

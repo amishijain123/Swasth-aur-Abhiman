@@ -44,22 +44,42 @@ class ChatRoom {
   });
 
   factory ChatRoom.fromJson(Map<String, dynamic> json) {
+    final participants = (json['participants'] as List?)
+            ?.map((p) => ChatParticipant.fromJson(p))
+            .toList() ??
+        [];
+
+    // Be tolerant of missing name/createdAt fields from older or partial API responses.
+    final fallbackName = json['name'] ?? (participants.isNotEmpty ? participants.first.name : 'Chat');
+
+    DateTime safeCreatedAt;
+    try {
+      safeCreatedAt = DateTime.parse(json['createdAt'] ?? DateTime.now().toIso8601String());
+    } catch (_) {
+      safeCreatedAt = DateTime.now();
+    }
+
+    DateTime? safeUpdatedAt;
+    if (json['updatedAt'] != null) {
+      try {
+        safeUpdatedAt = DateTime.parse(json['updatedAt']);
+      } catch (_) {
+        safeUpdatedAt = null;
+      }
+    }
+
     return ChatRoom(
       id: json['id'],
-      name: json['name'],
+      name: fallbackName,
       description: json['description'],
       type: json['type'],
-      participants: (json['participants'] as List?)
-              ?.map((p) => ChatParticipant.fromJson(p))
-              .toList() ??
-          [],
+      participants: participants,
       lastMessage: json['lastMessage'] != null
           ? Message.fromJson(json['lastMessage'])
           : null,
       unreadCount: json['unreadCount'] ?? 0,
-      createdAt: DateTime.parse(json['createdAt']),
-      updatedAt:
-          json['updatedAt'] != null ? DateTime.parse(json['updatedAt']) : null,
+      createdAt: safeCreatedAt,
+      updatedAt: safeUpdatedAt,
     );
   }
 
@@ -106,7 +126,7 @@ class ChatParticipant {
   factory ChatParticipant.fromJson(Map<String, dynamic> json) {
     return ChatParticipant(
       id: json['id'],
-      name: json['name'],
+      name: json['name'] ?? json['fullName'] ?? '',
       role: json['role'],
       avatarUrl: json['avatarUrl'],
       isOnline: json['isOnline'] ?? false,
