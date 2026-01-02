@@ -90,17 +90,17 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
                   Row(
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: [
-                      // UPES Logo (Left)
+                      // UPES Logo (Left) replaced with image.png
                       _buildLogoPlaceholder(
-                        assetName: 'assets/images/upes_logo.png',
-                        fallbackText: 'UPES',
+                        assetName: 'assets/images/image.png',
+                        fallbackText: 'image.png',
                         width: 80,
                         height: 50,
                       ),
-                      // Government Logo (Right)
+                      // Government Logo (Right) replaced with dst.png
                       _buildLogoPlaceholder(
-                        assetName: 'assets/images/gov_logo.png',
-                        fallbackText: 'DST',
+                        assetName: 'assets/images/dst.png',
+                        fallbackText: 'dst.png',
                         width: 80,
                         height: 50,
                       ),
@@ -134,14 +134,24 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
                     child: ClipRRect(
                       borderRadius: BorderRadius.circular(16),
                       child: Image.asset(
-                        'assets/images/main_app_logo.png',
-                        fit: BoxFit.contain,
+                        'assets/images/sua.jpeg',
+                        fit: BoxFit.cover,
                         errorBuilder: (context, error, stackTrace) {
                           return Center(
-                            child: Icon(
-                              Icons.health_and_safety,
-                              size: 80,
-                              color: Colors.green[700],
+                            child: Column(
+                              mainAxisSize: MainAxisSize.min,
+                              children: [
+                                Icon(
+                                  Icons.health_and_safety,
+                                  size: 64,
+                                  color: Colors.green[700],
+                                ),
+                                const SizedBox(height: 6),
+                                Text(
+                                  'sua.jpeg',
+                                  style: TextStyle(color: Colors.grey[600]),
+                                ),
+                              ],
                             ),
                           );
                         },
