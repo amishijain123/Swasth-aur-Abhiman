@@ -502,23 +502,80 @@ class CurriculumData {
     },
 
     8: {
-      'English': 'https://www.youtube.com/results?search_query=class+8+english+playlist',
-      'Hindi / Regional Language': 'https://www.youtube.com/results?search_query=class+8+hindi+playlist',
-      'Mathematics': 'https://www.youtube.com/results?search_query=class+8+mathematics+playlist',
-      'Science': 'https://www.youtube.com/results?search_query=class+8+science+playlist',
-      'Physics': 'https://www.youtube.com/results?search_query=class+8+physics+playlist',
-      'Chemistry': 'https://www.youtube.com/results?search_query=class+8+chemistry+playlist',
-      'Biology': 'https://www.youtube.com/results?search_query=class+8+biology+playlist',
-      'Social Science': 'https://www.youtube.com/results?search_query=class+8+social+science+playlist',
-      'History': 'https://www.youtube.com/results?search_query=class+8+history+playlist',
-      'Geography': 'https://www.youtube.com/results?search_query=class+8+geography+playlist',
-      'Civics': 'https://www.youtube.com/results?search_query=class+8+civics+playlist',
-      'Economics (introductory)': 'https://www.youtube.com/results?search_query=class+8+economics+playlist',
-      'Sanskrit / Third Language': 'https://www.youtube.com/results?search_query=class+8+sanskrit+playlist',
-      'Computer Science / ICT': 'https://www.youtube.com/results?search_query=class+8+computer+science+playlist',
-      'Art Education': 'https://www.youtube.com/results?search_query=class+8+art+education+playlist',
-      'Physical Education': 'https://www.youtube.com/results?search_query=class+8+physical+education+playlist',
-      'Moral Science / Value Education': 'https://www.youtube.com/results?search_query=class+8+moral+science+playlist',
+      'English': 'https://www.youtube.com/playlist?list=PLVLoWQFkZbhW_W_7o6oO-r9V3-U',
+      'Hindi / Regional Language': 'https://www.youtube.com/playlist?list=PLVLoWQFkZbhU_pLe6BbM1dOD2wcfHiuXC',
+      'Mathematics': 'https://www.youtube.com/playlist?list=PLVLoWQFkZbhX6Q9v_36_S9S_E',
+      'Science': 'https://www.youtube.com/playlist?list=PLVLoWQFkZbhVxyA3K-Ru0kuVTqhgqOJmO',
+      'Physics': 'https://www.youtube.com/playlist?list=PLrtKTzggq268L-nJp75KkK-UfV5Lg',
+      'Chemistry': 'https://www.youtube.com/playlist?list=PLrtKTzggq269N-ZzYj7Y-MvJ3V0l',
+      'Biology': 'https://www.youtube.com/playlist?list=PLrtKTzggq268R_m_8f228oX0XWjL6Jc5n',
+      'Social Science': 'https://www.youtube.com/playlist?list=PLz18M0aaL7ANDA7bZ46PW7d3wJkylJP3-',
+      'History': 'https://www.youtube.com/playlist?list=PLz18M0aaL7ANBCu8UzGfpUXw6CDc39amG',
+      'Geography': 'https://www.youtube.com/playlist?list=PLrtKTzggq2695v9m6_YxK3t5_d99CisqL',
+      'Civics': 'https://www.youtube.com/playlist?list=PLUGFATmVBid8sWYKsullvu0bOVk05y37i',
+      'Economics (introductory)': 'https://www.youtube.com/playlist?list=PLrtKTzggq268vN0I-n0P9DCHq0p_f4S4G',
+      'Sanskrit / Third Language': 'https://www.youtube.com/playlist?list=PLVLoWQFkZbhWKcVPBop5u7gDhlPUj33v9',
+      'Computer Science / ICT': 'https://www.youtube.com/playlist?list=PLxlGPLijthUKhJr0WXp_JFXcfYfdNkYDX',
+      'Art Education': 'https://www.youtube.com/playlist?list=PL2hDszH4XLgW5pKU7Ec6nthuygZdteRiF',
+      'Physical Education': 'https://www.youtube.com/playlist?list=PL2hDszH4XLgW5pKU7Ec6nthuygZdteRiF',
+      'Moral Science / Value Education': 'https://www.youtube.com/playlist?list=PLW6ZJtqCeoWstnN04GvB9IeA4P_mY5_Vj',
+    },
+
+    9: {
+      'English': 'https://www.youtube.com/playlist?list=PLrtKTzggq26_91FEDsuxhwWZYztUDnU7',
+      'Hindi / Regional Language': 'https://www.youtube.com/playlist?list=PLVLoWQFkZbhXum5pD97IJOVSSFzNRLPax',
+      'Mathematics': 'https://www.youtube.com/playlist?list=PLrtKTzggq268R_m_8f228oX0XWjL6Jc5n',
+      'Science': 'https://www.youtube.com/playlist?list=PLVLoWQFkZbhXmX6v6_5iJ3q2f0J2_mD8S',
+      'Physics': 'https://www.youtube.com/playlist?list=PLUGFATmVBid9qY1ZqX-zU_FpL-oA008hX',
+      'Chemistry': 'https://www.youtube.com/playlist?list=PLUGFATmVBid8D4j-WvRIn_70HlM4xWd_Q',
+      'Biology': 'https://www.youtube.com/playlist?list=PLUGFATmVBid9I08W9_vU6N0K-XGvL6i1P',
+      'Social Science': 'https://www.youtube.com/playlist?list=PLrtKTzggq268Sh5ID6uF4irYFTfyChiKy',
+      'History': 'https://www.youtube.com/playlist?list=PLrtKTzggq26_E6qUvD0D6_pW76_y_K4l8',
+      'Geography': 'https://www.youtube.com/playlist?list=PLrtKTzggq2695v9m6_YxK3t5_d99CisqL',
+      'Political Science': 'https://www.youtube.com/playlist?list=PLrtKTzggq26-I4yLwV-Kq_gO_zbeuYmE9',
+      'Economics': 'https://www.youtube.com/playlist?list=PLrtKTzggq268vN0I-n0P9DCHq0p_f4S4G',
+    },
+
+    10: {
+      'English': 'https://www.youtube.com/playlist?list=PLrtKTzggq26_y8f8XaeZRL7VnS5v_mBfG',
+      'Hindi / Regional Language': 'https://www.youtube.com/playlist?list=PLz18M0aaL7AMn5y8rP-X0pY1-X8k-N3p7',
+      'Mathematics': 'https://www.youtube.com/playlist?list=PLrtKTzggq268R_m_8f228oX0XWjL6Jc5n',
+      'Science': 'https://www.youtube.com/playlist?list=PLVLoWQFkZbhXmX6v6_5iJ3q2f0J2_mD8S',
+      'Physics': 'https://www.youtube.com/playlist?list=PLrtKTzggq268L-nJp75KkK-UfV5Lg',
+      'Chemistry': 'https://www.youtube.com/playlist?list=PLrtKTzggq269N-ZzYj7Y-MvJ3V0l',
+      'Biology': 'https://www.youtube.com/playlist?list=PLUGFATmVBid9I08W9_vU6N0K-XGvL6i1P',
+      'Social Science': 'https://www.youtube.com/playlist?list=PLrtKTzggq268Sh5ID6uF4irYFTfyChiKy',
+      'History': 'https://www.youtube.com/playlist?list=PLrtKTzggq26_E6qUvD0D6_pW76_y_K4l8',
+      'Geography': 'https://www.youtube.com/playlist?list=PLrtKTzggq2695v9m6_YxK3t5_d99CisqL',
+      'Political Science': 'https://www.youtube.com/playlist?list=PLrtKTzggq26-I4yLwV-Kq_gO_zbeuYmE9',
+      'Economics': 'https://www.youtube.com/playlist?list=PLrtKTzggq268vN0I-n0P9DCHq0p_f4S4G',
+    },
+
+    11: {
+      // Science Stream
+      'English': 'https://www.youtube.com/playlist?list=PLVLoWQFkZbhVWaTIGB27JMv0btP9bbJb2',
+      'Physics': 'https://www.youtube.com/playlist?list=PLVLoWQFkZbhX9i59Uq4Uzt82mNAl5lkj8',
+      'Chemistry': 'https://www.youtube.com/playlist?list=PLVLoWQFkZbhXlv6f9y_XUpWqI',
+      'Mathematics': 'https://www.youtube.com/playlist?list=PLVLoWQFkZbhV0kPS6-8eWJw2GuBSSkjYD',
+      'Biology': 'https://www.youtube.com/playlist?list=PLVLoWQFkZbhU_pLe6BbM1dOD2wcfHiuXC',
+      'Computer Science': 'https://www.youtube.com/playlist?list=PLVLoWQFkZbhVVFPPzL8qk1YdcS35-l5u_',
+
+      // Commerce Stream
+      'Accountancy': 'https://www.youtube.com/playlist?list=PLVLoWQFkZbhVnojZEhD6XHce88AV2Rs13',
+      'Business Studies': 'https://www.youtube.com/playlist?list=PLVLoWQFkZbhUX5KerhrM8O65KnBcvJKes',
+      'Economics': 'https://www.youtube.com/playlist?list=PLrtKTzggq268vN0I-n0P9DCHq0p_f4S4G',
+      'Informatics Practices': 'https://www.youtube.com/playlist?list=PLdFqKUpCmQ8pNbhKf84EajB5mcU7P9jvH',
+
+      // Arts Stream
+      'History': 'https://www.youtube.com/playlist?list=PLGrgIWihe6WaeoVpgVOKJcVuwO22nCf1v',
+      'Geography': 'https://www.youtube.com/playlist?list=PLVLoWQFkZbhV_m_eYhYyS6S9M',
+      'Political Science': 'https://www.youtube.com/playlist?list=PLVLoWQFkZbhXum5pD97IJOVSSFzNRLPax',
+      'Psychology': 'https://www.youtube.com/playlist?list=PLPMPYhLl4LyoaaOZs4R0c8yoceHX1Blb5',
+      'Sociology': 'https://www.youtube.com/playlist?list=PLVLoWQFkZbhVxyA3K-Ru0kuVTqhgqOJmO',
+
+      // Additional Subjects
+      'Physical Education': 'https://www.youtube.com/playlist?list=PL2hDszH4XLgW5pKU7Ec6nthuygZdteRiF',
+      'Fine Arts': 'https://www.youtube.com/playlist?list=PLW6ZJtqCeoWstnN04GvB9IeA4P_mY5_Vj',
     }
   };
 
