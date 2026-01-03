@@ -31,7 +31,7 @@ import { LoggerService } from './logger/logger.service';
     // Redis caching
     CacheModule.register({
       isGlobal: true,
-      store: redisStore as unknown as import('cache-manager').CacheStoreFactory,
+      store: redisStore as any,
       host: process.env.REDIS_HOST || 'localhost',
       port: process.env.REDIS_PORT || 6379,
       ttl: 300, // 5 minutes default

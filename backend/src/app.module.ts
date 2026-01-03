@@ -57,7 +57,7 @@ import { HealthCheckController } from './health/health-check.controller';
       imports: [ConfigModule],
       inject: [ConfigService],
       useFactory: async (configService: ConfigService) => ({
-        store: redisStore as unknown as import('cache-manager').CacheStoreFactory,
+        store: redisStore as any,
         host: configService.get('REDIS_HOST', 'localhost'),
         port: configService.get('REDIS_PORT', 6379),
         ttl: 300, // 5 minutes default
