@@ -29,6 +29,11 @@ lerna-debug.log*
 
 # IDE - VSCode
 .vscode/*
+
+# User uploaded files (except keep structure)
+/uploads/*
+!/uploads/.gitkeep
+.vscode/*
 !.vscode/settings.json
 !.vscode/tasks.json
 !.vscode/launch.json
