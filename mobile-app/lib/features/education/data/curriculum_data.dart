@@ -88,7 +88,6 @@ class CurriculumData {
         'Hindi / Regional Language',
         'Mathematics',
         'Science',
-        'Social Science',
         'History',
         'Geography',
         'Civics',
@@ -405,7 +404,7 @@ class CurriculumData {
     return Colors.blueGrey;
   }
 
-  /// Playlists for specific class subjects (Class 1)
+  /// Playlists for specific class subjects (Class 1 & 2)
   static const Map<int, Map<String, String>> _classPlaylists = {
     1: {
       'Mathematics': 'https://www.youtube.com/playlist?list=PLVLoWQFkZbhX6Q9',
@@ -413,6 +412,27 @@ class CurriculumData {
       'Hindi / Regional Language': 'https://www.youtube.com/playlist?list=PLVLoWQFkZbhU6prff2aiSLBNq94zl6NOS',
       'Environmental Studies (EVS)': 'https://www.youtube.com/playlist?list=PLVLoWQFkZbhVkXKKGzdsFsyOO1g7tCc-E',
       'Computer Studies': 'https://www.youtube.com/playlist?list=PL598I6QjK6',
+    },
+
+    2: {
+      // English (Mridang/Grammar)
+      'English': 'https://www.youtube.com/playlist?list=PLVLoWQFkZbhW_7I0MIn_D-WpB-2-p_u6i',
+      // Hindi (Sarangi/Rimjhim)
+      'Hindi / Regional Language': 'https://www.youtube.com/playlist?list=PLVLoWQFkZbhWc8MTj3ij7kvByNXxUc6S8',
+      // Mathematics (Joyful Math)
+      'Mathematics': 'https://www.youtube.com/playlist?list=PLVLoWQFkZbhX6Q9v_36_S9S_E',
+      // Environmental Studies (EVS)
+      'Environmental Studies (EVS)': 'https://www.youtube.com/playlist?list=PLVLoWQFkZbhVkXKKGzdsFsyOO1g7tCc-E',
+      // General Knowledge (GK)
+      'General Knowledge': 'https://www.youtube.com/playlist?list=PLKDnLbfqbMcjNdE90Svs_NTRHpkoCKN3v',
+      // Art & Craft
+      'Art & Craft': 'https://www.youtube.com/playlist?list=PLw7RjvenAfpZMnF3zGvlOeIvzzC8-1AF3',
+      // Physical Education
+      'Physical Education': 'https://www.youtube.com/playlist?list=PL2hDszH4XLgW5pKU7Ec6nthuygZdteRiF',
+      // Moral Science / Value Education
+      'Moral Science / Value Education': 'https://www.youtube.com/playlist?list=PLW6ZJtqCeoWstnN04GvB9IeA4P_mY5_Vj',
+      // Computer Studies
+      'Computer Studies': 'https://www.youtube.com/playlist?list=PL598I6QjK6X',
     }
   };
 
