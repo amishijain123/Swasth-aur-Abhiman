@@ -4,8 +4,8 @@ import { ThrottlerModule } from '@nestjs/throttler';
 import { CacheModule } from '@nestjs/cache-manager';
 import * as redisStore from 'cache-manager-redis-store';
 import { TerminusModule } from '@nestjs/terminus';
-import { HealthCheckController } from './health/health-check.controller';
-import { LoggerService } from './common/logger/logger.service';
+import { HealthCheckController } from '../health/health-check.controller';
+import { LoggerService } from './logger/logger.service';
 
 @Module({
   imports: [
@@ -31,7 +31,7 @@ import { LoggerService } from './common/logger/logger.service';
     // Redis caching
     CacheModule.register({
       isGlobal: true,
-      store: redisStore,
+      store: redisStore as unknown as import('cache-manager').CacheStoreFactory,
       host: process.env.REDIS_HOST || 'localhost',
       port: process.env.REDIS_PORT || 6379,
       ttl: 300, // 5 minutes default
