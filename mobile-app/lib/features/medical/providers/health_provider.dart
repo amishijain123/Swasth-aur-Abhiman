@@ -3,7 +3,6 @@ import '../../../core/network/dio_client.dart';
 import '../../../core/services/storage_service.dart';
 import '../models/health_models.dart';
 import '../repositories/medical_repository.dart';
-import 'dart:convert';
 
 final medicalRepositoryProvider = Provider<MedicalRepository>((ref) {
   final dio = ref.watch(dioProvider);
