@@ -304,7 +304,7 @@ class _HealthMetricsScreenState extends ConsumerState<HealthMetricsScreen>
           titlesData: const FlTitlesData(show: true),
           borderData: FlBorderData(show: true),
           lineBarsData: [
-            LineBarData(
+            LineChartBarData(
               spots: spots,
               isCurved: true,
               color: Colors.blue,
@@ -349,7 +349,7 @@ class _HealthMetricsScreenState extends ConsumerState<HealthMetricsScreen>
           borderData: FlBorderData(show: true),
           lineBarsData: [
             if (systolicSpots.isNotEmpty)
-              LineBarData(
+              LineChartBarData(
                 spots: systolicSpots,
                 isCurved: true,
                 color: Colors.red,
@@ -357,7 +357,7 @@ class _HealthMetricsScreenState extends ConsumerState<HealthMetricsScreen>
                 dotData: const FlDotData(show: true),
               ),
             if (diastolicSpots.isNotEmpty)
-              LineBarData(
+              LineChartBarData(
                 spots: diastolicSpots,
                 isCurved: true,
                 color: Colors.blue,

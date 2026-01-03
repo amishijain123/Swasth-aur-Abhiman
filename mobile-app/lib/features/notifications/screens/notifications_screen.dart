@@ -82,7 +82,7 @@ final notificationsProvider = FutureProvider<({
 })>((ref) async {
   // TODO: Fetch from API /notifications
   return (
-    notifications: [],
+    notifications: <NotificationItem>[],
     unreadCount: 0,
     total: 0,
   );
@@ -115,7 +115,7 @@ class _NotificationsScreenState extends ConsumerState<NotificationsScreen> {
         elevation: 0,
         actions: [
           IconButton(
-            icon: const Icon(Icons.check_all),
+            icon: const Icon(Icons.done_all),
             onPressed: () {
               // TODO: Mark all as read
               ScaffoldMessenger.of(context).showSnackBar(

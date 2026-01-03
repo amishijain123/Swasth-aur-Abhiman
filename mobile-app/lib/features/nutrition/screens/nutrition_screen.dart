@@ -256,10 +256,14 @@ class _NutritionScreenState extends ConsumerState<NutritionScreen>
                       ),
                     ],
                   ),
-                  CircularProgressIndicator(
-                    value: (mealData.totalCalories / (plan?.targetCalories ?? 2000))
-                        .clamp(0.0, 1.0),
-                    minRadius: 25,
+                  SizedBox(
+                    width: 50,
+                    height: 50,
+                    child: CircularProgressIndicator(
+                      value: (mealData.totalCalories / (plan?.targetCalories ?? 2000))
+                          .clamp(0.0, 1.0),
+                      strokeWidth: 6,
+                    ),
                   ),
                 ],
               ),
