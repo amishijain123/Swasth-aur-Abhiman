@@ -9,6 +9,12 @@ import { PrescriptionsModule } from './prescriptions/prescriptions.module';
 import { ChatModule } from './chat/chat.module';
 import { YoutubeModule } from './youtube/youtube.module';
 import { AnalyticsModule } from './analytics/analytics.module';
+import { AdminModule } from './admin/admin.module';
+import { HealthModule } from './health/health.module';
+import { DoctorModule } from './doctor/doctor.module';
+import { SkillsModule } from './skills/skills.module';
+import { NutritionModule } from './nutrition/nutrition.module';
+import { NotificationModule } from './notifications/notifications.module';
 
 @Module({
   imports: [
@@ -44,6 +50,12 @@ import { AnalyticsModule } from './analytics/analytics.module';
     ChatModule,
     YoutubeModule,
     AnalyticsModule,
+    AdminModule,
+    HealthModule,
+    DoctorModule,
+    SkillsModule,
+    NutritionModule,
+    NotificationModule,
   ],
 })
 export class AppModule {}
