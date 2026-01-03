@@ -3,7 +3,7 @@ import { JwtService } from '@nestjs/jwt';
 import { getRepositoryToken } from '@nestjs/typeorm';
 import { AuthService } from './auth.service';
 import { User } from '../users/entities/user.entity';
-import { UserRole } from '../common/enums/user.enum';
+import { UserRole, Gender } from '../common/enums/user.enum';
 import { UnauthorizedException, ConflictException } from '@nestjs/common';
 import * as bcrypt from 'bcrypt';
 
@@ -50,8 +50,9 @@ describe('AuthService', () => {
         email: 'test@example.com',
         password: 'password123',
         fullName: 'Test User',
-        phone: '1234567890',
+        phoneNumber: '1234567890',
         role: UserRole.USER,
+        gender: Gender.MALE,
       };
 
       mockUserRepository.findOne.mockResolvedValue(null);
@@ -71,8 +72,9 @@ describe('AuthService', () => {
         email: 'existing@example.com',
         password: 'password123',
         fullName: 'Test User',
-        phone: '1234567890',
+        phoneNumber: '1234567890',
         role: UserRole.USER,
+        gender: Gender.FEMALE,
       };
 
       mockUserRepository.findOne.mockResolvedValue({ id: '1', ...registerDto });
@@ -86,6 +88,7 @@ describe('AuthService', () => {
       const loginDto = {
         email: 'test@example.com',
         password: 'password123',
+        role: UserRole.USER,
       };
 
       const hashedPassword = await bcrypt.hash(loginDto.password, 10);
@@ -110,6 +113,7 @@ describe('AuthService', () => {
       const loginDto = {
         email: 'test@example.com',
         password: 'wrongpassword',
+        role: UserRole.USER,
       };
 
       mockUserRepository.findOne.mockResolvedValue(null);
@@ -121,6 +125,7 @@ describe('AuthService', () => {
       const loginDto = {
         email: 'test@example.com',
         password: 'password123',
+        role: UserRole.USER,
       };
 
       const hashedPassword = await bcrypt.hash(loginDto.password, 10);

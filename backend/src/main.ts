@@ -22,7 +22,7 @@ async function bootstrap() {
   app.useLogger(logger);
 
   // Security middleware - helmet
-  app.use(helmet({
+  app.use(helmet.default({
     contentSecurityPolicy: {
       directives: {
         defaultSrc: ["'self'"],
@@ -35,7 +35,7 @@ async function bootstrap() {
   }));
 
   // Compression middleware
-  app.use(compression());
+  app.use((compression as any)());
 
   // Global exception filter
   app.useGlobalFilters(new AllExceptionsFilter(logger));

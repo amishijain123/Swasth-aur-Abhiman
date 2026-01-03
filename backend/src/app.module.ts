@@ -4,7 +4,6 @@ import { TypeOrmModule } from '@nestjs/typeorm';
 import { ThrottlerModule, ThrottlerGuard } from '@nestjs/throttler';
 import { APP_GUARD } from '@nestjs/core';
 import { CacheModule } from '@nestjs/cache-manager';
-import * as redisStore from 'cache-manager-redis-store';
 import { TerminusModule } from '@nestjs/terminus';
 import { AuthModule } from './auth/auth.module';
 import { UsersModule } from './users/users.module';
@@ -51,18 +50,11 @@ import { HealthCheckController } from './health/health-check.controller';
       },
     ]),
 
-    // Redis Caching
-    CacheModule.registerAsync({
+    // Caching Module (Memory-based, compatible with @nestjs/cache-manager)
+    CacheModule.register({
       isGlobal: true,
-      imports: [ConfigModule],
-      inject: [ConfigService],
-      useFactory: async (configService: ConfigService) => ({
-        store: redisStore,
-        host: configService.get('REDIS_HOST', 'localhost'),
-        port: configService.get('REDIS_PORT', 6379),
-        ttl: 300, // 5 minutes default
-        max: 100, // maximum number of items in cache
-      }),
+      ttl: 300, // 5 minutes default
+      max: 100, // maximum number of items in cache
     }),
 
     // Health Checks
