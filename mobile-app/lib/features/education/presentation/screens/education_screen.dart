@@ -7,6 +7,8 @@ import '../widgets/subject_card.dart';
 import '../widgets/education_content_list.dart';
 import '../widgets/pdf_viewer_screen.dart';
 import '../../data/curriculum_data.dart';
+import 'package:url_launcher/url_launcher_string.dart';
+import 'package:url_launcher/url_launcher.dart';
 
 class EducationScreen extends ConsumerStatefulWidget {
   const EducationScreen({super.key});
@@ -194,8 +196,21 @@ class _EducationScreenState extends ConsumerState<EducationScreen> {
           name: subject,
           icon: CurriculumData.getSubjectIcon(subject),
           color: CurriculumData.getSubjectColor(subject),
-          onTap: () {
-            setState(() => _selectedSubject = subject);
+          onTap: () async {
+            final classNum = _selectedClass!;
+            final playlist = CurriculumData.getPlaylistForClassSubject(classNum, subject);
+            if (playlist != null) {
+              try {
+                final launched = await launchUrlString(playlist, mode: LaunchMode.externalApplication);
+                if (!launched) {
+                  ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text('Could not open playlist')));
+                }
+              } catch (e) {
+                ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text('Could not open playlist')));
+              }
+            } else {
+              setState(() => _selectedSubject = subject);
+            }
           },
         );
       },

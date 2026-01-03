@@ -404,4 +404,33 @@ class CurriculumData {
 
     return Colors.blueGrey;
   }
+
+  /// Playlists for specific class subjects (Class 1)
+  static const Map<int, Map<String, String>> _classPlaylists = {
+    1: {
+      'Mathematics': 'https://www.youtube.com/playlist?list=PLVLoWQFkZbhX6Q9',
+      'English': 'https://www.youtube.com/playlist?list=PLW6ZJtqCeoWtstTEojp8vTuZ-SKYYdwCg',
+      'Hindi / Regional Language': 'https://www.youtube.com/playlist?list=PLVLoWQFkZbhU6prff2aiSLBNq94zl6NOS',
+      'Environmental Studies (EVS)': 'https://www.youtube.com/playlist?list=PLVLoWQFkZbhVkXKKGzdsFsyOO1g7tCc-E',
+      'Computer Studies': 'https://www.youtube.com/playlist?list=PL598I6QjK6',
+    }
+  };
+
+  /// Get playlist URL for a given class and subject (if available)
+  static String? getPlaylistForClassSubject(int classNumber, String subject) {
+    final map = _classPlaylists[classNumber];
+    if (map == null) return null;
+
+    // Try exact match
+    if (map.containsKey(subject)) return map[subject];
+
+    // Try lower-case contains matching (for alternative subject names)
+    final lower = subject.toLowerCase();
+    for (final entry in map.entries) {
+      if (lower.contains(entry.key.toLowerCase())) return entry.value;
+    }
+
+    return null;
+  }
 }
+
