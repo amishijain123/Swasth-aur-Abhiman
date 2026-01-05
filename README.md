@@ -214,69 +214,932 @@ swasth-aur-abhiman/
 ## 🚀 Getting Started
 
 ### Prerequisites
-- Node.js 18+
-- Flutter SDK 3.0+
-- Docker & Docker Compose
-- PostgreSQL 15+
 
-### Quick Start
+Before setting up the project, ensure you have the following installed:
 
-#### 1. Setup Backend
+- **Node.js 18+** - [Download](https://nodejs.org/)
+- **npm 9+** - Comes with Node.js
+- **Flutter SDK 3.0+** - [Download](https://flutter.dev/docs/get-started/install)
+- **Docker & Docker Compose** - [Download](https://www.docker.com/products/docker-desktop)
+- **PostgreSQL 15+** - [Download](https://www.postgresql.org/download/) (or use Docker)
+- **Git** - [Download](https://git-scm.com/)
+
+#### Verify Installations
+```bash
+node --version      # Should be v18 or higher
+npm --version       # Should be 9 or higher
+flutter --version   # Should be 3.0 or higher
+docker --version    # Verify Docker is installed
+docker-compose --version  # Verify Docker Compose is installed
+```
+
+---
+
+### 📋 Step-by-Step Setup Guide
+
+#### Step 1: Clone the Repository
+```bash
+git clone https://github.com/smirk-dev/Swasth-aur-Abhiman.git
+cd Swasth-aur-Abhiman
+```
+
+#### Step 2: Setup Backend (NestJS API)
+
+1. **Navigate to backend directory**
+   ```bash
+   cd backend
+   ```
+
+2. **Install dependencies**
+   ```bash
+   npm install
+   ```
+
+3. **Configure environment variables**
+   ```bash
+   cp .env.example .env
+   ```
+   
+   Edit `.env` with your configuration:
+   ```env
+   # Database Configuration
+   DB_HOST=localhost
+   DB_PORT=5432
+   DB_USERNAME=postgres
+   DB_PASSWORD=postgres
+   DB_DATABASE=swastha_aur_abhiman
+   
+   # JWT Configuration
+   JWT_SECRET=your-secret-key-here
+   JWT_EXPIRES_IN=7d
+   
+   # Server Configuration
+   PORT=3000
+   NODE_ENV=development
+   
+   # Redis Configuration (for caching)
+   REDIS_HOST=localhost
+   REDIS_PORT=6379
+   
+   # Storage Configuration
+   ENABLE_CLOUD_STORAGE=false
+   ```
+
+4. **Start Docker services** (PostgreSQL, Redis)
+   ```bash
+   docker-compose up -d
+   ```
+   
+   Verify services are running:
+   ```bash
+   docker-compose ps
+   ```
+
+5. **Run database migrations**
+   ```bash
+   npm run migration:run
+   ```
+
+6. **Start the backend server**
+   ```bash
+   npm run start:dev
+   ```
+   
+   The backend will be available at: `http://localhost:3000`
+   
+   You should see: `Nest application successfully started`
+
+7. **Verify backend is working**
+   ```bash
+   curl http://localhost:3000/health
+   ```
+
+---
+
+#### Step 3: Setup Admin Dashboard (React Web App)
+
+1. **Open a new terminal and navigate to admin-dashboard**
+   ```bash
+   cd admin-dashboard
+   ```
+
+2. **Install dependencies**
+   ```bash
+   npm install
+   ```
+
+3. **Configure environment variables**
+   ```bash
+   cp .env.example .env
+   ```
+   
+   Edit `.env`:
+   ```env
+   REACT_APP_API_URL=http://localhost:3000/api
+   REACT_APP_WS_URL=http://localhost:3000
+   ```
+
+4. **Start the development server**
+   ```bash
+   npm start
+   ```
+   
+   The admin dashboard will open at: `http://localhost:3001`
+
+5. **Default login credentials** (after backend seed)
+   ```
+   Email: admin@example.com
+   Password: admin123
+   ```
+
+---
+
+#### Step 4: Setup Mobile App (Flutter)
+
+1. **Open a new terminal and navigate to mobile-app**
+   ```bash
+   cd mobile-app
+   ```
+
+2. **Get Flutter dependencies**
+   ```bash
+   flutter pub get
+   ```
+
+3. **Configure API endpoints**
+   
+   Edit `lib/core/constants/app_constants.dart`:
+   ```dart
+   static const String baseUrl = 'http://localhost:3000/api';
+   static const String wsUrl = 'http://localhost:3000';
+   
+   // For Android Emulator, use:
+   // static const String baseUrl = 'http://10.0.2.2:3000/api';
+   
+   // For iOS Simulator, use:
+   // static const String baseUrl = 'http://localhost:3000/api';
+   
+   // For Physical Device (replace with your IP):
+   // static const String baseUrl = 'http://192.168.1.100:3000/api';
+   ```
+
+4. **List available devices**
+   ```bash
+   flutter devices
+   ```
+
+5. **Run the app**
+   
+   For Android Emulator:
+   ```bash
+   flutter run
+   ```
+   
+   For iOS Simulator:
+   ```bash
+   open -a Simulator
+   flutter run
+   ```
+   
+   For Physical Device:
+   ```bash
+   flutter run -d <device-id>
+   ```
+
+6. **Enable hot reload during development**
+   - Press `r` in terminal to hot reload
+   - Press `R` to hot restart
+   - Press `q` to quit
+
+---
+
+### ✅ Verification Checklist
+
+After completing all steps, verify everything is working:
+
+- [ ] **Backend running**: `http://localhost:3000/health` returns 200 OK
+- [ ] **Database connected**: No connection errors in backend logs
+- [ ] **Admin dashboard loads**: `http://localhost:3001` opens without errors
+- [ ] **Admin login works**: Can log in with default credentials
+- [ ] **Mobile app runs**: App starts on emulator/device without errors
+- [ ] **API communication**: Mobile app can communicate with backend
+
+---
+
+### 🔄 Development Workflow
+
+Once everything is set up, here's the typical development workflow:
+
+**Terminal 1 - Backend**
 ```bash
 cd backend
-npm install
-cp .env.example .env
-# Edit .env with your configuration
-docker-compose up -d
 npm run start:dev
 ```
 
-Backend will run at: `http://localhost:3000/api`
-
-#### 2. Setup Admin Dashboard
+**Terminal 2 - Admin Dashboard**
 ```bash
 cd admin-dashboard
-npm install
-cp .env.example .env
-# Edit .env with API URL
 npm start
 ```
 
-Admin dashboard will run at: `http://localhost:3001`
-
-#### 3. Setup Mobile App
+**Terminal 3 - Mobile App**
 ```bash
 cd mobile-app
-flutter pub get
-# Update API URL in lib/core/constants/app_constants.dart
+flutter run -d emulator-5554  # or your device ID
+```
+
+**Or run all services with Docker** (optional):
+```bash
+docker-compose -f backend/docker-compose.yml up
+```
+
+---
+
+### 🛠️ Useful Development Commands
+
+**Backend**
+```bash
+npm run start         # Production start
+npm run start:dev     # Development with auto-reload
+npm run start:debug   # With debugging
+npm run build         # Build for production
+npm run test          # Run tests
+npm run test:e2e      # Run end-to-end tests
+npm run lint          # Run ESLint
+npm run migration:run # Run database migrations
+```
+
+**Admin Dashboard**
+```bash
+npm start             # Development server
+npm run build         # Production build
+npm run test          # Run tests
+npm run eject         # Eject from Create React App (irreversible)
+```
+
+**Mobile App**
+```bash
+flutter run           # Run on default device
+flutter run -d chrome # Run on web (experimental)
+flutter build apk     # Build Android APK
+flutter build ios     # Build iOS app
+flutter pub upgrade   # Update dependencies
+flutter analyze       # Analyze code for issues
+flutter test          # Run tests
+```
+
+---
+
+### 📱 Running on Different Platforms
+
+**Android Emulator**
+```bash
+# Set API URL in app_constants.dart
+static const String baseUrl = 'http://10.0.2.2:3000/api';
+
+# Run app
 flutter run
 ```
 
-### Development Workflow
+**iOS Simulator**
+```bash
+# Set API URL in app_constants.dart
+static const String baseUrl = 'http://localhost:3000/api';
 
-1. **Database Setup**
+# Start simulator first
+open -a Simulator
+
+# Run app
+flutter run
+```
+
+**Physical Android Device**
+```bash
+# Enable USB debugging on device
+# Connect device via USB
+
+# Find device ID
+flutter devices
+
+# Set API URL in app_constants.dart (use your machine IP)
+static const String baseUrl = 'http://192.168.1.100:3000/api';
+
+# Run app
+flutter run -d <device-id>
+```
+
+**Physical iOS Device**
+```bash
+# Set API URL in app_constants.dart
+static const String baseUrl = 'http://192.168.1.100:3000/api';
+
+# Run app (requires Apple developer account)
+flutter run -d <device-id>
+```
+
+---
+
+### 🐳 Docker Setup (Alternative)
+
+If you prefer using Docker for everything:
+
+1. **Build Docker images**
    ```bash
-   cd backend
+   docker-compose build
+   ```
+
+2. **Start all services**
+   ```bash
    docker-compose up -d
    ```
 
-2. **Backend Development**
+3. **Check service status**
    ```bash
-   cd backend
-   npm run start:dev
+   docker-compose ps
    ```
 
-3. **Admin Dashboard Development**
+4. **View logs**
    ```bash
-   cd admin-dashboard
-   npm start
+   docker-compose logs -f backend
+   docker-compose logs -f postgres
    ```
 
-4. **Mobile Development**
+5. **Stop all services**
    ```bash
-   cd mobile-app
-   flutter run --debug
+   docker-compose down
    ```
+
+6. **Access database via Docker**
+   ```bash
+   docker-compose exec postgres psql -U postgres -d swastha_aur_abhiman
+   ```
+
+---
+
+### 🚀 Quick Start (One-Command Setup)
+
+If you want to set up everything quickly:
+
+**macOS/Linux:**
+```bash
+./scripts/setup.sh
+```
+
+**Windows:**
+```bash
+scripts\setup.bat
+```
+
+(Note: Create these scripts based on the step-by-step guide above)
+
+---
+
+### 💡 Tips & Best Practices
+
+1. **Keep dependencies updated**
+   ```bash
+   npm outdated      # Check for outdated packages
+   npm update        # Update packages
+   ```
+
+2. **Use environment variables**
+   - Never commit `.env` files
+   - Keep `.env.example` updated with new variables
+
+3. **Database best practices**
+   - Always create migrations for schema changes
+   - Test migrations in development first
+   - Keep database backups
+
+4. **Mobile development**
+   - Use `flutter analyze` before committing code
+   - Run `flutter test` to catch bugs early
+   - Test on multiple devices/screen sizes
+
+5. **Performance monitoring**
+   - Use Chrome DevTools for web debugging
+   - Use DevTools for Flutter debugging
+   - Monitor API performance with `npm run load-test`
+
+---
+
+## 🎬 Features Tour & Screenshots
+
+Explore the comprehensive features of **Swastha Aur Abhiman** across all platforms:
+
+### 🏥 Medical Services Module
+
+#### Health Metrics Tracking
+Track and monitor vital health indicators in real-time.
+
+**Features:**
+- 📊 Record multiple health metrics: Blood Pressure, Blood Sugar, BMI, Weight, Temperature, Pulse
+- 📈 Visual charts and trend analysis over time
+- 🎯 Health status indicators (Normal, Elevated, High, Critical)
+- 🔔 Automatic alerts for abnormal readings
+- 📋 Complete health session history
+
+**Screenshots:**
+- `screenshots/health-metrics-tracking.png` - Metrics recording interface
+- `screenshots/health-trends.png` - Health trends visualization
+- `screenshots/health-analysis.png` - AI-powered health analysis
+
+**How to Use:**
+1. Open the Health section in mobile app
+2. Click "Record Metrics"
+3. Input vital readings (BP, Blood Sugar, BMI, etc.)
+4. View automatic analysis and recommendations
+5. Check trends in the "Health History" tab
+
+---
+
+#### Doctor Dashboard
+Comprehensive patient management system for medical professionals.
+
+**Features:**
+- 👥 Patient list with search and filtering
+- 📊 Patient health metrics and medical history
+- 💊 Prescription management and review
+- 📝 Patient notes and consultation records
+- 📊 Health analytics per patient
+- 🔔 Real-time notifications for new patient activities
+- 💬 Direct messaging with patients
+
+**Screenshots:**
+- `screenshots/doctor-dashboard.png` - Main dashboard overview
+- `screenshots/doctor-patients.png` - Patient list view
+- `screenshots/doctor-patient-detail.png` - Detailed patient profile
+- `screenshots/doctor-prescriptions.png` - Prescription review interface
+- `screenshots/doctor-chat.png` - Patient-doctor chat
+
+**Key Sections:**
+1. **Patients Tab** - View all assigned patients
+   - Search by name/ID
+   - Filter by health status
+   - Sort by recent activity
+   - View patient summaries
+
+2. **Health Records Tab** - Access patient health data
+   - View complete health history
+   - Analyze trends and patterns
+   - Add clinical notes
+   - Generate health reports
+
+3. **Prescriptions Tab** - Manage medical prescriptions
+   - Review uploaded prescriptions
+   - Add notes and recommendations
+   - Update prescription status
+   - Track prescription compliance
+
+4. **Chat Tab** - Real-time communication
+   - Message patients directly
+   - Receive patient health updates
+   - Share medical resources
+   - Schedule consultations
+
+---
+
+### 📚 Education Hub
+
+#### Teacher Dashboard
+Complete content management system for educators.
+
+**Features:**
+- 📚 NCERT content management (Class 1-12)
+- 📊 Student progress tracking and analytics
+- ✏️ Lesson plan creation and management
+- 📈 Performance metrics and engagement statistics
+- 🎯 Assignment distribution and tracking
+- 📊 Class-wise analytics and reports
+- 📁 Content organization by subject and chapter
+
+**Screenshots:**
+- `screenshots/teacher-dashboard.png` - Teacher dashboard overview
+- `screenshots/teacher-classes.png` - Class management
+- `screenshots/teacher-content.png` - NCERT content browser
+- `screenshots/teacher-analytics.png` - Student analytics dashboard
+- `screenshots/teacher-lesson-plans.png` - Lesson planning interface
+
+**Key Features:**
+1. **Content Management**
+   - Browse NCERT books by class and subject
+   - Upload supplementary materials
+   - Organize content with tags
+   - Track content performance
+
+2. **Student Progress**
+   - Monitor student engagement
+   - Track assignment completion
+   - View performance metrics
+   - Generate progress reports
+
+3. **Analytics**
+   - View class-wide statistics
+   - Identify struggling students
+   - Analyze content popularity
+   - Track learning outcomes
+
+4. **Lesson Planning**
+   - Create detailed lesson plans
+   - Link to NCERT content
+   - Schedule lessons
+   - Assign homework and assessments
+
+---
+
+#### Student/User Learning View
+Intuitive learning interface for students.
+
+**Features:**
+- 📖 Browse NCERT content by class and subject
+- 📺 Video tutorials and educational materials
+- ✏️ Interactive assessments and quizzes
+- 📊 Progress tracking and badges
+- 📝 Notes and bookmarks
+- 🎓 Download certificates upon completion
+- 💬 Ask questions to teachers (in progress)
+
+**Screenshots:**
+- `screenshots/student-home.png` - Student home screen
+- `screenshots/student-subjects.png` - Subject selection
+- `screenshots/student-content-viewer.png` - Content viewing interface
+- `screenshots/student-progress.png` - Progress tracking
+
+---
+
+### 🛠️ Skills Training Module
+
+#### Trainer Dashboard
+Manage vocational and skill training programs.
+
+**Features:**
+- 👥 Trainee management and enrollment
+- 📊 Skills progress tracking per trainee
+- 🎓 Automated certificate generation
+- 📈 Training analytics and reports
+- 📋 Course content management
+- 🎯 Skill assessment and evaluations
+- 💼 Job placement tracking
+
+**Screenshots:**
+- `screenshots/trainer-dashboard.png` - Trainer overview
+- `screenshots/trainer-trainees.png` - Trainee management
+- `screenshots/trainer-progress.png` - Training progress tracking
+- `screenshots/trainer-certificates.png` - Certificate management
+- `screenshots/trainer-analytics.png` - Training analytics
+
+**Supported Skills:**
+- 🎍 Bamboo Work
+- 🐝 Honeybee Farming
+- 🧵 Jute Work
+- 🎨 Macrame
+- 👨‍🏫 Artisan Training
+
+**How to Use:**
+1. View enrolled trainees
+2. Monitor training progress
+3. Review skill assessments
+4. Issue certificates upon completion
+5. Generate training reports
+
+---
+
+#### Skills Hub (Student View)
+Access skill training programs and track progress.
+
+**Features:**
+- 🔍 Browse available skills and courses
+- 📝 Enroll in training programs
+- 📊 Track training progress
+- 📜 Earn and download certificates
+- 💬 Communicate with trainers
+- 🏆 View earned badges and achievements
+- 📹 Access training videos and materials
+
+**Screenshots:**
+- `screenshots/skills-browse.png` - Skills catalog
+- `screenshots/skills-enroll.png` - Enrollment interface
+- `screenshots/skills-progress.png` - Training progress
+- `screenshots/skills-certificate.png` - Certificate display
+
+---
+
+### 🍽️ Nutrition Module
+
+#### Nutrition Plans & Dietary Guidance
+Personalized nutrition and wellness recommendations.
+
+**Features:**
+- 📋 Browse diet plans and recipes
+- 🥗 Nutrition information and calorie tracking
+- 🏥 Post-COVID nutrition guidance
+- 🌿 Traditional food wisdom and remedies
+- 📊 Personalized recommendations based on health metrics
+- 🔖 Save favorite recipes
+- 📥 Download meal plans
+- 🍽️ Food substitution suggestions
+
+**Screenshots:**
+- `screenshots/nutrition-home.png` - Nutrition hub
+- `screenshots/nutrition-plans.png` - Available diet plans
+- `screenshots/nutrition-recipes.png` - Recipe browsing
+- `screenshots/nutrition-details.png` - Nutrition information
+- `screenshots/nutrition-postcovid.png` - Post-COVID guidance
+
+**Content Categories:**
+- General Wellness
+- Post-COVID Recovery
+- Disease-Specific Diets
+- Weight Management
+- Traditional Remedies
+
+---
+
+### 💬 Real-Time Communication
+
+#### Chat System
+Seamless messaging between different user roles.
+
+**Features:**
+- 👥 One-on-one and group chats
+- ⚡ Real-time messaging with WebSocket
+- 📸 Share images and files in chat
+- 📞 Chat notifications and unread counters
+- 🔍 Search message history
+- 🔒 Encrypted communication
+- 📱 Mobile and web support
+
+**Supported Conversations:**
+- Patient ↔ Doctor
+- Student ↔ Teacher
+- Trainee ↔ Trainer
+- User ↔ Admin Support
+
+**Screenshots:**
+- `screenshots/chat-list.png` - Chat rooms list
+- `screenshots/chat-messages.png` - Chat conversation
+- `screenshots/chat-media.png` - Media sharing in chat
+- `screenshots/chat-notifications.png` - Chat notifications
+
+**Usage:**
+1. Open Chat section
+2. Select conversation or create new
+3. Type message and send
+4. Receive real-time notifications
+5. Share media directly in chat
+
+---
+
+### 🔔 Notifications System
+
+#### Real-Time Alerts & Updates
+Stay informed with instant notifications.
+
+**Features:**
+- 🔔 Real-time WebSocket notifications
+- 📱 Push notifications (planned)
+- 🎯 Notification categorization
+  - Health alerts
+  - Prescription updates
+  - Assignment reminders
+  - Message notifications
+  - System announcements
+- 📋 Notification history (30 days)
+- ✅ Mark as read/unread
+- 🔍 Search notifications
+- ⚙️ Notification preferences (planned)
+
+**Notification Types:**
+- **Health**: Abnormal health readings, prescription alerts
+- **Education**: New assignments, grades, announcements
+- **Skills**: Enrollment confirmations, progress updates, certificates
+- **Chat**: New messages, message replies
+- **System**: Maintenance notices, updates
+
+**Screenshots:**
+- `screenshots/notifications-center.png` - Notification hub
+- `screenshots/notifications-types.png` - Different notification types
+- `screenshots/notifications-history.png` - Notification history
+- `screenshots/notifications-settings.png` - Notification preferences
+
+---
+
+### 🎛️ Admin Dashboard (Web)
+
+#### Content Management
+Comprehensive admin panel for system management.
+
+**Features:**
+- 📤 Media upload (videos, images, documents)
+- 🏷️ Content tagging and categorization
+- 📊 Analytics dashboard
+- 👥 User management and role assignment
+- 🔑 Access control and permissions
+- 📋 Bulk upload capabilities
+- ☁️ Cloud storage configuration (AWS S3/MinIO)
+- 💾 Toggle between local and cloud storage
+- 📥 CSV export functionality
+- 🔐 Secure file management with versioning
+
+**Screenshots:**
+- `screenshots/admin-dashboard.png` - Admin dashboard
+- `screenshots/admin-media.png` - Media management
+- `screenshots/admin-upload.png` - File upload interface
+- `screenshots/admin-users.png` - User management
+- `screenshots/admin-analytics.png` - Analytics dashboard
+- `screenshots/admin-settings.png` - System settings
+
+**Key Sections:**
+
+1. **Dashboard**
+   - System overview
+   - Quick stats
+   - Recent activities
+   - Performance metrics
+
+2. **Media Management**
+   - Upload new media
+   - Edit metadata
+   - Delete/archive content
+   - View analytics
+   - Organize by category
+
+3. **User Management**
+   - View all users
+   - Filter by role
+   - Activate/deactivate accounts
+   - Reset passwords
+   - Export user list
+
+4. **Analytics**
+   - Content performance metrics
+   - User engagement statistics
+   - Health trend analysis
+   - Revenue reports
+   - Custom date ranges
+
+5. **Settings**
+   - Storage configuration
+   - API keys management
+   - Email settings
+   - System preferences
+   - Backup and restore
+
+---
+
+### 📱 Mobile App Interface
+
+#### Home Screen
+Dashboard with quick access to all features.
+
+**Components:**
+- 👤 User profile section
+- 🔔 Notification bell with unread count
+- 🎯 Quick action buttons
+- 📰 News and announcements feed
+- 🔗 Quick links to main modules
+
+**Screenshots:**
+- `screenshots/mobile-home.png` - Home screen
+- `screenshots/mobile-navigation.png` - Bottom navigation bar
+
+#### Navigation Structure
+```
+📱 Bottom Navigation Bar
+├── 🏠 Home
+│   ├── Dashboard
+│   ├── Quick Actions
+│   └── Announcements
+├── 🏥 Health
+│   ├── Record Metrics
+│   ├── Health History
+│   ├── Prescriptions
+│   └── Doctor Chat
+├── 📚 Education
+│   ├── Browse Content
+│   ├── My Progress
+│   ├── Assignments
+│   └── Teacher Chat
+├── 💼 Skills
+│   ├── Available Courses
+│   ├── My Enrollments
+│   ├── Progress Tracking
+│   └── Certificates
+├── 🍽️ Nutrition
+│   ├── Diet Plans
+│   ├── Recipes
+│   ├── Recommendations
+│   └── Wellness Guides
+├── 💬 Chat
+│   ├── Messages
+│   └── Notifications
+└── 👤 Profile
+    ├── Profile Info
+    ├── Settings
+    ├── Preferences
+    └── Logout
+```
+
+---
+
+### 🔐 Authentication & Security
+
+#### Login Screen
+Secure user authentication.
+
+**Features:**
+- 📧 Email-based login
+- 🔐 Password security
+- 🔄 Forgot password recovery
+- 📝 New user registration
+- ✅ Email verification
+- 🔒 JWT token-based sessions
+- 🛡️ Account lockout after failed attempts
+
+**Screenshots:**
+- `screenshots/login-screen.png` - Login interface
+- `screenshots/signup-screen.png` - Registration screen
+- `screenshots/password-reset.png` - Password recovery
+
+**User Roles After Login:**
+- 👤 **Regular User** - Access health, education, skills, nutrition
+- 🏥 **Doctor** - Full doctor dashboard + user features
+- 👨‍🏫 **Teacher** - Full teacher dashboard + user features
+- 👨‍🏫 **Trainer** - Full trainer dashboard + user features
+- 🔑 **Admin** - Full system access via admin dashboard
+
+---
+
+#### User Profile
+Personal information and preferences.
+
+**Features:**
+- 👤 Profile information editing
+- 📸 Profile picture upload
+- 📞 Contact details management
+- 🗺️ Address and location
+- 🏥 Medical information (for doctors)
+- 🎓 Educational background (for teachers)
+- ⚙️ App preferences and settings
+- 🔔 Notification preferences
+- 🌙 Theme selection (light/dark mode)
+- 🌍 Language preferences (planned)
+
+**Screenshots:**
+- `screenshots/profile-view.png` - Profile display
+- `screenshots/profile-edit.png` - Profile editing
+- `screenshots/profile-settings.png` - App settings
+- `screenshots/profile-preferences.png` - User preferences
+
+---
+
+### 📊 Analytics & Reporting
+
+#### Health Analytics
+Comprehensive health data visualization.
+
+**Features:**
+- 📈 Trend analysis for all health metrics
+- 📊 Comparative analysis (current vs. previous)
+- 🎯 Health status indicators
+- 📋 Generate health reports
+- 📥 Export data as CSV/PDF
+- 🔍 Filter by date range
+- 💾 Health history archive
+
+**Visualizations:**
+- Line charts for trends
+- Bar charts for comparisons
+- Gauge indicators for status
+- Summary cards with key metrics
+
+**Screenshots:**
+- `screenshots/analytics-health.png` - Health analytics
+- `screenshots/analytics-trends.png` - Trend visualization
+- `screenshots/analytics-reports.png` - Health reports
+
+#### Content Analytics
+Track content performance and engagement.
+
+**Available to:**
+- Teachers (for educational content)
+- Admins (for all content)
+- Trainers (for course materials)
+
+**Metrics:**
+- 👁️ View counts
+- ⭐ Ratings and reviews
+- 📝 Comments and feedback
+- ⏱️ Average view duration
+- 📊 Engagement rates
+- 🔝 Most popular content
+- 📉 Least engaging content
+
+**Screenshots:**
+- `screenshots/analytics-content.png` - Content performance
+- `screenshots/analytics-engagement.png` - Engagement metrics
+
+---
 
 ## 📖 Documentation
 
