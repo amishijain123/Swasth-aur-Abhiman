@@ -90,9 +90,16 @@ class ChatRepository {
           'participantIds': participantIds,
         },
       );
-      return ChatRoom.fromJson(response.data);
-    } catch (e) {
+      
+      if (response.statusCode == 201 || response.statusCode == 200) {
+        return ChatRoom.fromJson(response.data);
+      }
+      
+      print('Failed to create room: ${response.statusCode}');
       return null;
+    } catch (e) {
+      print('Error creating room: $e');
+      rethrow;
     }
   }
 
@@ -106,11 +113,18 @@ class ChatRepository {
         '/chat/contacts',
         queryParameters: queryParams,
       );
-      return (response.data as List)
-          .map((c) => AvailableContact.fromJson(c))
-          .toList();
-    } catch (e) {
+      
+      if (response.data is List) {
+        return (response.data as List)
+            .map((c) => AvailableContact.fromJson(c))
+            .toList();
+      }
+      
+      print('Unexpected response format for contacts');
       return [];
+    } catch (e) {
+      print('Error loading contacts: $e');
+      rethrow;
     }
   }
 

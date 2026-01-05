@@ -2,6 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../../providers/doctor_provider.dart';
 import '../../repositories/doctor_repository.dart';
+import '../../../chat/providers/chat_provider.dart';
+import '../../../chat/presentation/screens/chat_room_screen.dart';
 
 class PatientsScreen extends ConsumerStatefulWidget {
   const PatientsScreen({super.key});
@@ -156,9 +158,9 @@ class _PatientsScreenState extends ConsumerState<PatientsScreen> {
               children: [
                 Expanded(
                   child: ElevatedButton.icon(
-                    onPressed: () {
+                    onPressed: () async {
                       Navigator.pop(context);
-                      // TODO: Open chat with patient
+                      await _openChatWithPatient(patient);
                     },
                     icon: const Icon(Icons.message),
                     label: const Text('Message'),
@@ -210,6 +212,40 @@ class _PatientsScreenState extends ConsumerState<PatientsScreen> {
         ],
       ),
     );
+  }
+
+  Future<void> _openChatWithPatient(PatientInfo patient) async {
+    try {
+      // Create or get existing chat room with patient
+      final room = await ref
+          .read(chatProvider.notifier)
+          .createDirectChat(patient.id, patient.name);
+      
+      if (room != null && mounted) {
+        Navigator.push(
+          context,
+          MaterialPageRoute(
+            builder: (_) => ChatRoomScreen(room: room),
+          ),
+        );
+      } else if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(
+            content: Text('Failed to open chat with patient'),
+            duration: Duration(seconds: 2),
+          ),
+        );
+      }
+    } catch (e) {
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text('Error opening chat: ${e.toString()}'),
+            duration: const Duration(seconds: 2),
+          ),
+        );
+      }
+    }
   }
 }
 

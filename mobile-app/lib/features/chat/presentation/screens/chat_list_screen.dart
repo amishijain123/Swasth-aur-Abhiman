@@ -108,11 +108,41 @@ class _ChatListScreenState extends ConsumerState<ChatListScreen> {
       builder: (_) => NewChatDialog(
         onContactSelected: (contact) async {
           Navigator.pop(context);
-          final room = await ref
-              .read(chatProvider.notifier)
-              .createDirectChat(contact.id, contact.name);
-          if (room != null && mounted) {
-            _openChatRoom(room);
+          
+          // Show loading indicator
+          if (mounted) {
+            ScaffoldMessenger.of(context).showSnackBar(
+              const SnackBar(
+                content: Text('Creating chat...'),
+                duration: Duration(seconds: 2),
+              ),
+            );
+          }
+          
+          try {
+            final room = await ref
+                .read(chatProvider.notifier)
+                .createDirectChat(contact.id, contact.name);
+            
+            if (room != null && mounted) {
+              _openChatRoom(room);
+            } else if (mounted) {
+              ScaffoldMessenger.of(context).showSnackBar(
+                const SnackBar(
+                  content: Text('Failed to create chat room'),
+                  duration: Duration(seconds: 2),
+                ),
+              );
+            }
+          } catch (e) {
+            if (mounted) {
+              ScaffoldMessenger.of(context).showSnackBar(
+                SnackBar(
+                  content: Text('Error: ${e.toString()}'),
+                  duration: const Duration(seconds: 2),
+                ),
+              );
+            }
           }
         },
       ),

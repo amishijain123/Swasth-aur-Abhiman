@@ -231,11 +231,13 @@ class ChatNotifier extends StateNotifier<ChatState> {
   }
 
   Future<void> loadContacts({String? role}) async {
+    state = state.copyWith(isLoading: true);
     try {
       final contacts = await _repository.getAvailableContacts(role: role);
-      state = state.copyWith(contacts: contacts);
+      state = state.copyWith(contacts: contacts, isLoading: false);
     } catch (e) {
-      // Ignore errors
+      print('Error loading contacts: $e');
+      state = state.copyWith(isLoading: false, error: e.toString());
     }
   }
 
@@ -248,14 +250,20 @@ class ChatNotifier extends StateNotifier<ChatState> {
       );
 
       if (room != null) {
-        state = state.copyWith(
-          rooms: [room, ...state.rooms],
-        );
+        // Check if room already exists in the list
+        final existingIndex = state.rooms.indexWhere((r) => r.id == room.id);
+        if (existingIndex == -1) {
+          // Add new room to the beginning
+          state = state.copyWith(
+            rooms: [room, ...state.rooms],
+          );
+        }
       }
 
       return room;
     } catch (e) {
-      return null;
+      print('Error creating direct chat: $e');
+      rethrow;
     }
   }
 
