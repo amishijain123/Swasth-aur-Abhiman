@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:url_launcher/url_launcher.dart';
 import '../../models/event_models.dart';
+import '../../data/historical_events.dart';
 
 class EventDetailScreen extends StatelessWidget {
   final Event event;
@@ -150,6 +151,12 @@ class EventDetailScreen extends StatelessWidget {
                       ['${event.expectedAttendees} people'],
                     ),
 
+                    const SizedBox(height: 16),
+
+                    // Event Gallery (for historical events)
+                    if (HistoricalEvents.hasGallery(event.id))
+                      _buildEventGallery(),
+
                   const SizedBox(height: 32),
 
                   // Action Buttons
@@ -206,6 +213,106 @@ class EventDetailScreen extends StatelessWidget {
       ),
     );
   }
+
+    Widget _buildEventGallery() {
+      final galleryImages = HistoricalEvents.getEventGallery(event.id);
+      if (galleryImages == null || galleryImages.isEmpty) {
+        return const SizedBox.shrink();
+      }
+
+      return Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          const Text(
+            'Event Gallery',
+            style: TextStyle(
+              fontSize: 18,
+              fontWeight: FontWeight.bold,
+            ),
+          ),
+          const SizedBox(height: 12),
+          SizedBox(
+            height: 120,
+            child: ListView.builder(
+              scrollDirection: Axis.horizontal,
+              itemCount: galleryImages.length,
+              itemBuilder: (context, index) {
+                return GestureDetector(
+                  onTap: () => _showGalleryImage(context, galleryImages, index),
+                  child: Container(
+                    width: 120,
+                    margin: const EdgeInsets.only(right: 12),
+                    decoration: BoxDecoration(
+                      borderRadius: BorderRadius.circular(12),
+                      boxShadow: [
+                        BoxShadow(
+                          color: Colors.black.withOpacity(0.1),
+                          blurRadius: 8,
+                          offset: const Offset(0, 2),
+                        ),
+                      ],
+                    ),
+                    child: ClipRRect(
+                      borderRadius: BorderRadius.circular(12),
+                      child: Image.asset(
+                        galleryImages[index],
+                        fit: BoxFit.cover,
+                        errorBuilder: (_, __, ___) => Container(
+                          color: Colors.grey[300],
+                          child: const Icon(Icons.image, size: 40),
+                        ),
+                      ),
+                    ),
+                  ),
+                );
+              },
+            ),
+          ),
+        ],
+      );
+    }
+
+    void _showGalleryImage(BuildContext context, List<String> images, int initialIndex) {
+      showDialog(
+        context: context,
+        builder: (context) => Dialog(
+          backgroundColor: Colors.black,
+          child: Stack(
+            children: [
+              PageView.builder(
+                itemCount: images.length,
+                controller: PageController(initialPage: initialIndex),
+                itemBuilder: (context, index) {
+                  return InteractiveViewer(
+                    child: Center(
+                      child: Image.asset(
+                        images[index],
+                        fit: BoxFit.contain,
+                        errorBuilder: (_, __, ___) => const Center(
+                          child: Icon(
+                            Icons.broken_image,
+                            color: Colors.white,
+                            size: 80,
+                          ),
+                        ),
+                      ),
+                    ),
+                  );
+                },
+              ),
+              Positioned(
+                top: 16,
+                right: 16,
+                child: IconButton(
+                  icon: const Icon(Icons.close, color: Colors.white, size: 30),
+                  onPressed: () => Navigator.pop(context),
+                ),
+              ),
+            ],
+          ),
+        ),
+      );
+    }
 
   Widget _buildPlaceholder(Color color, IconData icon) {
     return Container(

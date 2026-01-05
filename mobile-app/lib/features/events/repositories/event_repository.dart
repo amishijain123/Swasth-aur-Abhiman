@@ -2,6 +2,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:hive/hive.dart';
 import '../../../core/services/api_service.dart';
 import '../models/event_models.dart';
+import '../data/historical_events.dart';
 
 class EventRepository {
   final ApiService _apiService;
@@ -20,18 +21,31 @@ class EventRepository {
         queryParameters: queryParams,
       );
 
-      final events = (response.data as List)
-          .map((e) => Event.fromJson(e))
-          .toList();
+        final apiEvents = (response.data as List)
+            .map((e) => Event.fromJson(e))
+            .toList();
+      
+        // Merge with historical events
+        final historicalEvents = HistoricalEvents.getAllHistoricalEvents();
+        final allEvents = [...apiEvents, ...historicalEvents];
 
       // Cache events locally
       if (_eventsBox != null) {
-        for (final event in events) {
+          for (final event in allEvents) {
           await _eventsBox!.put(event.id, event);
         }
       }
 
-      return events;
+        // Apply filters to combined events
+        var filteredEvents = allEvents;
+        if (block != null) {
+          filteredEvents = filteredEvents.where((e) => e.block == block).toList();
+        }
+        if (eventType != null) {
+          filteredEvents = filteredEvents.where((e) => e.eventType == eventType).toList();
+        }
+      
+        return filteredEvents;
     } catch (e) {
       // Return cached data on error
       if (_eventsBox != null) {
@@ -41,7 +55,15 @@ class EventRepository {
         }
         return cachedEvents;
       }
-      return [];
+        // If no cache, at least return historical events
+        var historicalEvents = HistoricalEvents.getAllHistoricalEvents();
+        if (block != null) {
+          historicalEvents = historicalEvents.where((e) => e.block == block).toList();
+        }
+        if (eventType != null) {
+          historicalEvents = historicalEvents.where((e) => e.eventType == eventType).toList();
+        }
+        return historicalEvents;
     }
   }
 
