@@ -86,7 +86,6 @@ class ChatRepository {
         '/chat/rooms',
         data: {
           'name': name,
-          'type': type,
           'participantIds': participantIds,
         },
       );

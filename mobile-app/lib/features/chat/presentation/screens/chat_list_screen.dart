@@ -61,7 +61,7 @@ class _ChatListScreenState extends ConsumerState<ChatListScreen> {
           ),
           const SizedBox(height: 8),
           Text(
-            'Start a chat with a doctor, teacher, or trainer',
+            'Start a chat with anyone in your network',
             style: TextStyle(color: Colors.grey[600]),
             textAlign: TextAlign.center,
           ),

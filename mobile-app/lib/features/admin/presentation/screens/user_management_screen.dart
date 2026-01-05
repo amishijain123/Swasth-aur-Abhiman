@@ -2,6 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../../providers/admin_provider.dart';
 import '../../repositories/admin_repository.dart';
+import '../../../chat/providers/chat_provider.dart';
+import '../../../chat/presentation/screens/chat_room_screen.dart';
 
 class UserManagementScreen extends ConsumerStatefulWidget {
   const UserManagementScreen({super.key});
@@ -192,6 +194,21 @@ class _UserManagementScreenState extends ConsumerState<UserManagementScreen>
             Row(
               children: [
                 Expanded(
+                  child: ElevatedButton.icon(
+                    onPressed: () async {
+                      Navigator.pop(context);
+                      await _openChatWithUser(user);
+                    },
+                    icon: const Icon(Icons.message),
+                    label: const Text('Message'),
+                  ),
+                ),
+              ],
+            ),
+            const SizedBox(height: 12),
+            Row(
+              children: [
+                Expanded(
                   child: OutlinedButton.icon(
                     onPressed: () {
                       Navigator.pop(context);
@@ -251,7 +268,39 @@ class _UserManagementScreenState extends ConsumerState<UserManagementScreen>
       ),
     );
   }
-
+  Future<void> _openChatWithUser(AdminUser user) async {
+    try {
+      // Create or get existing chat room with user
+      final room = await ref
+          .read(chatProvider.notifier)
+          .createDirectChat(user.id, user.name);
+      
+      if (room != null && mounted) {
+        Navigator.push(
+          context,
+          MaterialPageRoute(
+            builder: (_) => ChatRoomScreen(room: room),
+          ),
+        );
+      } else if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(
+            content: Text('Failed to open chat with user'),
+            duration: Duration(seconds: 2),
+          ),
+        );
+      }
+    } catch (e) {
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text('Error opening chat: ${e.toString()}'),
+            duration: const Duration(seconds: 2),
+          ),
+        );
+      }
+    }
+  }
   Color _getRoleColor(String role) {
     switch (role) {
       case 'DOCTOR':

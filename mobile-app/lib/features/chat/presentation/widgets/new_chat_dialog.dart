@@ -91,6 +91,8 @@ class _NewChatDialogState extends ConsumerState<NewChatDialog> {
                     const SizedBox(width: 8),
                     _buildRoleChip('TRAINER', '🧑‍🏭 Trainers'),
                     const SizedBox(width: 8),
+                    _buildRoleChip('ADMIN', '👨‍💼 Admins'),
+                    const SizedBox(width: 8),
                     _buildRoleChip('USER', '👤 Users'),
                   ],
                 ),

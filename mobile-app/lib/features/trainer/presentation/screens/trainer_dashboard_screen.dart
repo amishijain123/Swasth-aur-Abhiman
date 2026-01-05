@@ -7,6 +7,8 @@ import '../widgets/skill_content_card.dart';
 import 'upload_skill_content_screen.dart';
 import 'my_skill_content_screen.dart';
 import 'schedule_session_screen.dart';
+import '../../../chat/providers/chat_provider.dart';
+import '../../../chat/presentation/screens/chat_list_screen.dart';
 
 class TrainerDashboardScreen extends ConsumerStatefulWidget {
   const TrainerDashboardScreen({super.key});
@@ -34,6 +36,14 @@ class _TrainerDashboardScreenState extends ConsumerState<TrainerDashboardScreen>
       appBar: AppBar(
         title: const Text('Trainer Dashboard'),
         actions: [
+          IconButton(
+            icon: const Icon(Icons.message),
+            onPressed: () => Navigator.push(
+              context,
+              MaterialPageRoute(builder: (_) => const ChatListScreen()),
+            ),
+            tooltip: 'Messages',
+          ),
           IconButton(
             icon: const Icon(Icons.refresh),
             onPressed: () => ref.read(trainerProvider.notifier).loadDashboard(),

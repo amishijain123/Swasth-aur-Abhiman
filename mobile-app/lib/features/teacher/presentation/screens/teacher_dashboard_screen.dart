@@ -5,6 +5,8 @@ import '../widgets/teacher_stats_card.dart';
 import '../widgets/content_card.dart';
 import 'upload_content_screen.dart';
 import 'my_content_screen.dart';
+import '../../../chat/providers/chat_provider.dart';
+import '../../../chat/presentation/screens/chat_list_screen.dart';
 
 class TeacherDashboardScreen extends ConsumerStatefulWidget {
   const TeacherDashboardScreen({super.key});
@@ -32,6 +34,14 @@ class _TeacherDashboardScreenState extends ConsumerState<TeacherDashboardScreen>
       appBar: AppBar(
         title: const Text('Teacher Dashboard'),
         actions: [
+          IconButton(
+            icon: const Icon(Icons.message),
+            onPressed: () => Navigator.push(
+              context,
+              MaterialPageRoute(builder: (_) => const ChatListScreen()),
+            ),
+            tooltip: 'Messages',
+          ),
           IconButton(
             icon: const Icon(Icons.refresh),
             onPressed: () => ref.read(teacherProvider.notifier).loadDashboard(),
